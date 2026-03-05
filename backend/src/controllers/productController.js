@@ -1,12 +1,78 @@
 // =============================================
 // CONTROLADOR DE PRODUCTOS - GROW HOUSE
+// Con generación de información por IA (Claude)
 // =============================================
 
 const mongoose = require('mongoose');
-
 const Product = require('../models/product');
 
 console.log('🎮 Controlador de productos Grow House inicializado');
+
+// =============================================
+// FUNCIÓN DE IA - GENERAR INFO DEL PRODUCTO
+// =============================================
+
+async function generateProductAIInfo(product) {
+    console.log(`🤖 Generando información IA para: ${product.name}`);
+
+    const prompt = `Eres un experto en plantas, jardinería y productos para el hogar verde. 
+Dado el siguiente producto de una tienda colombiana llamada "Grow House", genera información útil para el comprador.
+
+PRODUCTO:
+- Nombre: ${product.name}
+- Categoría: ${product.category}
+- Descripción: ${product.description}
+${product.brand ? `- Marca: ${product.brand}` : ''}
+${product.tags && product.tags.length > 0 ? `- Etiquetas: ${product.tags.join(', ')}` : ''}
+
+Responde ÚNICAMENTE con un JSON válido con esta estructura exacta (sin markdown, sin texto extra):
+{
+  "generalInfo": "Párrafo de 3-4 oraciones con información general interesante y útil sobre este producto para el comprador colombiano. Menciona sus beneficios, usos principales y por qué es una buena elección.",
+  "careGuide": {
+    "luz": "Requisitos de luz (solo si aplica a plantas o productos relacionados, si no aplica escribe 'No aplica para este producto')",
+    "riego": "Frecuencia y forma de riego (solo si aplica, si no escribe 'No aplica para este producto')",
+    "suelo": "Tipo de suelo o sustrato recomendado (solo si aplica, si no escribe 'No aplica para este producto')",
+    "temperatura": "Rango de temperatura ideal (solo si aplica, si no escribe 'No aplica para este producto')",
+    "consejos": "2-3 consejos prácticos de uso, mantenimiento o cuidado específicos para este producto"
+  }
+}`;
+
+try {
+        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
+            },
+            body: JSON.stringify({
+                model: process.env.AI_MODEL || 'gpt-3.5-turbo',
+                max_tokens: 1000,
+                messages: [{ role: 'user', content: prompt }]
+            })
+        });
+
+        if (!response.ok) {
+            const err = await response.text();
+            throw new Error(`OpenAI API error: ${response.status} - ${err}`);
+        }
+
+        const data = await response.json();
+        const text = data.choices[0].message.content.trim();
+
+        console.log('🤖 Respuesta cruda de OpenAI:', text); 
+
+        // Limpiar posibles backticks si el modelo los pone
+        const clean = text.replace(/```json|```/g, '').trim();
+        const parsed = JSON.parse(clean);
+
+        console.log(`✅ Info IA generada correctamente para: ${product.name}`);
+        return parsed;
+
+    } catch (error) {
+        console.error(`❌ Error generando info IA: ${error.message}`);
+        return null;
+    }
+}
 
 // =============================================
 // FUNCIÓN 1: OBTENER TODOS LOS PRODUCTOS
@@ -36,7 +102,6 @@ const getAllProducts = async (req, res, next) => {
             filters.inStock = req.query.inStock === 'true';
         }
 
-        // ✅ AGREGADO: filtro de featured
         if (req.query.featured !== undefined) {
             filters.featured = req.query.featured === 'true';
         }
@@ -50,7 +115,6 @@ const getAllProducts = async (req, res, next) => {
             ];
         }
 
-        // Configurar ordenamiento
         let sortBy = {};
         switch (req.query.sortBy) {
             case 'price_asc': sortBy = { price: 1 }; break;
@@ -61,12 +125,10 @@ const getAllProducts = async (req, res, next) => {
             default: sortBy = { createdAt: -1 };
         }
 
-        // Paginación
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 12;
         const skip = (page - 1) * limit;
 
-        // Ejecutar consulta
         const products = await Product.find(filters)
             .sort(sortBy)
             .skip(skip)
@@ -100,6 +162,7 @@ const getAllProducts = async (req, res, next) => {
 
 // =============================================
 // FUNCIÓN 2: OBTENER PRODUCTO POR ID
+// Con generación automática de info IA si no existe
 // =============================================
 
 const getProductById = async (req, res, next) => {
@@ -107,7 +170,6 @@ const getProductById = async (req, res, next) => {
         const { id } = req.params;
         console.log(`🔍 Buscando producto: ${id}`);
 
-        // ✅ VALIDAR ObjectId ANTES DE CONSULTAR
         if (!mongoose.Types.ObjectId.isValid(id)) {
             return res.status(400).json({
                 success: false,
@@ -129,6 +191,30 @@ const getProductById = async (req, res, next) => {
         // Incrementar vistas
         await Product.findByIdAndUpdate(id, { $inc: { viewCount: 1 } });
 
+        // ✅ GENERAR INFO IA si no existe todavía
+        if (!product.aiInfo || !product.aiInfo.generatedAt) {
+            console.log(`🤖 Producto sin info IA, generando...`);
+
+            const aiData = await generateProductAIInfo(product);
+
+            if (aiData) {
+                product.aiInfo = {
+                    generalInfo: aiData.generalInfo,
+                    careGuide: aiData.careGuide,
+                    generatedAt: new Date()
+                };
+
+                // Guardar en DB para no volver a generar
+                await Product.findByIdAndUpdate(id, {
+                    $set: { aiInfo: product.aiInfo }
+                });
+
+                console.log(`💾 Info IA guardada en MongoDB para: ${product.name}`);
+            }
+        } else {
+            console.log(`✅ Info IA ya existente para: ${product.name}, usando caché`);
+        }
+
         console.log(`✅ Producto encontrado: ${product.name}`);
 
         res.status(200).json({
@@ -142,7 +228,6 @@ const getProductById = async (req, res, next) => {
     }
 };
 
-
 // =============================================
 // FUNCIÓN 3: CREAR PRODUCTO
 // =============================================
@@ -151,7 +236,6 @@ const createProduct = async (req, res, next) => {
     try {
         console.log(`📱 Creando producto: ${req.body.name}`);
 
-        // Validar nombre único
         if (req.body.name) {
             const existing = await Product.findOne({
                 name: new RegExp(`^${req.body.name.trim()}$`, 'i')
@@ -166,7 +250,6 @@ const createProduct = async (req, res, next) => {
             }
         }
 
-        // Validar precio
         if (req.body.price && (req.body.price < 1000 || req.body.price > 50000000)) {
             return res.status(400).json({
                 success: false,
@@ -178,12 +261,30 @@ const createProduct = async (req, res, next) => {
         const product = new Product(req.body);
         await product.save();
 
+        // ✅ Generar info IA para el producto recién creado (en background)
+        generateProductAIInfo(product).then(async (aiData) => {
+            if (aiData) {
+                await Product.findByIdAndUpdate(product._id, {
+                    $set: {
+                        aiInfo: {
+                            generalInfo: aiData.generalInfo,
+                            careGuide: aiData.careGuide,
+                            generatedAt: new Date()
+                        }
+                    }
+                });
+                console.log(`🤖 Info IA generada en background para: ${product.name}`);
+            }
+        }).catch(err => {
+            console.warn(`⚠️ Error generando IA en background: ${err.message}`);
+        });
+
         console.log(`✅ Producto creado: ${product.name} - ID: ${product._id}`);
 
         res.status(201).json({
             success: true,
             message: 'Producto creado exitosamente',
-            data: product.toObject() // Convertir a objeto plano
+            data: product.toObject()
         });
 
     } catch (error) {
@@ -201,7 +302,6 @@ const updateProduct = async (req, res, next) => {
         const { id } = req.params;
         console.log(`✏️ Actualizando producto: ${id}`);
 
-        // Validar nombre único (excluyendo el actual)
         if (req.body.name) {
             const existing = await Product.findOne({
                 name: new RegExp(`^${req.body.name.trim()}$`, 'i'),
@@ -215,6 +315,15 @@ const updateProduct = async (req, res, next) => {
                     message: `Ya existe otro producto: "${req.body.name}"`
                 });
             }
+        }
+
+        // Si se cambia nombre, descripción o categoría → regenerar info IA
+        const fieldsAffectingAI = ['name', 'description', 'category', 'brand', 'tags'];
+        const shouldRegenerateAI = fieldsAffectingAI.some(f => req.body[f] !== undefined);
+
+        if (shouldRegenerateAI) {
+            console.log('🤖 Campos clave modificados, se regenerará info IA al próximo acceso');
+            req.body['aiInfo.generatedAt'] = null; // Forzar regeneración
         }
 
         const product = await Product.findByIdAndUpdate(

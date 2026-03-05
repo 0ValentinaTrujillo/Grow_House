@@ -168,27 +168,35 @@ mainImage: {
     // =============================================
     // RATINGS Y REVIEWS
     // =============================================
-    
+
     rating: {
-    average: {
-        type: Number,
-        min: [0, 'La calificación no puede ser menor a 0'],
-        max: [5, 'La calificación no puede ser mayor a 5'],
-        default: 0
+        average: {
+            type: Number,
+            min: [0, 'La calificación no puede ser menor a 0'],
+            max: [5, 'La calificación no puede ser mayor a 5'],
+            default: 0
+        },
+        count: {
+            type: Number,
+            min: [0, 'El conteo de calificaciones no puede ser negativo'],
+            default: 0
+        },
+        breakdown: {
+            five:  { type: Number, min: 0, default: 0 },
+            four:  { type: Number, min: 0, default: 0 },
+            three: { type: Number, min: 0, default: 0 },
+            two:   { type: Number, min: 0, default: 0 },
+            one:   { type: Number, min: 0, default: 0 }
+        },
+        // ✅ NUEVO: Registra qué usuario calificó y con cuántas estrellas
+        userRatings: [
+            {
+                userId:    { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+                rating:    { type: Number, required: true, min: 1, max: 5 },
+                createdAt: { type: Date, default: Date.now }
+            }
+        ]
     },
-    count: {
-        type: Number,
-        min: [0, 'El conteo de calificaciones no puede ser negativo'],
-        default: 0
-    },
-    breakdown: {
-        five: { type: Number, min: 0, default: 0 },
-        four: { type: Number, min: 0, default: 0 },
-        three: { type: Number, min: 0, default: 0 },
-        two: { type: Number, min: 0, default: 0 },
-        one: { type: Number, min: 0, default: 0 }
-    }
-},
     // =============================================
     // ETIQUETAS Y BÚSQUEDA
     // =============================================
@@ -240,8 +248,27 @@ mainImage: {
     },
     default: 'active',
     index: true
-}
-    
+}, 
+    // =============================================
+    // INFORMACIÓN GENERADA POR IA
+    // =============================================
+    aiInfo: {
+        generalInfo: {
+            type: String,
+            default: null
+        },
+        careGuide: {
+            luz:         { type: String, default: null },
+            riego:       { type: String, default: null },
+            suelo:       { type: String, default: null },
+            temperatura: { type: String, default: null },
+            consejos:    { type: String, default: null }
+        },
+        generatedAt: {
+            type: Date,
+            default: null
+        }
+    }   
 }, {
     // =============================================
     // OPCIONES DEL SCHEMA

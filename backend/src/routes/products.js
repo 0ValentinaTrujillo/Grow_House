@@ -67,15 +67,15 @@ router.get('/', getAllProducts);
 
 /**
  * @route   POST /api/products/:id/rating
- * @desc    Calificar un producto (1-5 estrellas)
+ * @desc    Calificar un producto (1-5 estrellas) — 1 voto por usuario
  * @access  Privado (usuario autenticado)
  * @body    { rating: Number (1-5) }
  */
-router.post('/:id/rating', async (req, res) => {
+router.post('/:id/rating', protect, async (req, res) => {
     try {
         const { rating } = req.body;
 
-        // Validar que el rating sea un número entre 1 y 5
+        // Validar rating
         if (!rating || rating < 1 || rating > 5 || !Number.isInteger(Number(rating))) {
             return res.status(400).json({
                 success: false,
@@ -92,14 +92,39 @@ router.post('/:id/rating', async (req, res) => {
             });
         }
 
+        const userId = req.user._id.toString();
         const ratingNum = Number(rating);
-        const starKey = ['one', 'two', 'three', 'four', 'five'][ratingNum - 1];
 
-        // Incrementar el contador de esa estrella
+        // ✅ Verificar si el usuario ya calificó este producto
+        const alreadyRated = product.rating.userRatings.find(
+            r => r.userId.toString() === userId
+        );
+
+        if (alreadyRated) {
+            return res.status(400).json({
+                success: false,
+                message: 'Ya calificaste este producto anteriormente',
+                data: {
+                    average: product.rating.average,
+                    count: product.rating.count,
+                    userRating: alreadyRated.rating  // Devolver su calificación previa
+                }
+            });
+        }
+
+        // ✅ Registrar el voto del usuario
+        product.rating.userRatings.push({
+            userId: req.user._id,
+            rating: ratingNum,
+            createdAt: new Date()
+        });
+
+        // Actualizar breakdown
+        const starKey = ['one', 'two', 'three', 'four', 'five'][ratingNum - 1];
         product.rating.breakdown[starKey] += 1;
         product.rating.count += 1;
 
-        // Recalcular el promedio
+        // Recalcular promedio
         const { breakdown, count } = product.rating;
         const total =
             breakdown.one * 1 +
@@ -118,7 +143,8 @@ router.post('/:id/rating', async (req, res) => {
             data: {
                 average: product.rating.average,
                 count: product.rating.count,
-                breakdown: product.rating.breakdown
+                breakdown: product.rating.breakdown,
+                userRating: ratingNum
             }
         });
 
@@ -131,6 +157,41 @@ router.post('/:id/rating', async (req, res) => {
         });
     }
 });
+
+/**
+ * @route   GET /api/products/:id/my-rating
+ * @desc    Obtener la calificación del usuario para un producto
+ * @access  Privado (usuario autenticado)
+ */
+router.get('/:id/my-rating', protect, async (req, res) => {
+    try {
+        const product = await Product.findById(req.params.id).select('rating');
+
+        if (!product) {
+            return res.status(404).json({ success: false, message: 'Producto no encontrado' });
+        }
+
+        const userId = req.user._id.toString();
+        const userRating = product.rating.userRatings.find(
+            r => r.userId.toString() === userId
+        );
+
+        return res.status(200).json({
+            success: true,
+            data: {
+                hasRated: !!userRating,
+                userRating: userRating ? userRating.rating : null,
+                average: product.rating.average,
+                count: product.rating.count
+            }
+        });
+
+    } catch (error) {
+        console.error('❌ Error al obtener rating del usuario:', error);
+        return res.status(500).json({ success: false, message: 'Error interno del servidor' });
+    }
+});
+
 
 /**
  * @route   GET /api/products/:id

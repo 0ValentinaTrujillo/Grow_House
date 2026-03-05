@@ -99,46 +99,38 @@ function updateProductImage(product) {
     }
 }
 /**
- * Actualizar información del producto
+ * Actualizar información del producto con IA y calificaciones
+ * Incluye manejo de calificaciones previas del usuario
  */
 function updateProductInfo(product) {
-    // Nombre del producto (hay dos elementos h3 y h2)
-    const h3Elements = document.querySelectorAll('#product-details h3');
-    const h2Elements = document.querySelectorAll('h2');
-    
-    h3Elements.forEach(el => {
-        el.textContent = product.name;
-    });
-    
-    h2Elements.forEach(el => {
+    // ── Nombre ──
+    document.querySelectorAll('h2').forEach(el => {
         if (el.textContent.includes('Cargando')) {
             el.textContent = product.name;
         }
     });
-    
-    // Precio
+
+    // ── Precio ──
     const priceContainer = document.getElementById('product-price');
     if (priceContainer) {
         const hasDiscount = product.originalPrice && product.originalPrice > product.price;
-        
-    if (hasDiscount) {
-        priceContainer.parentElement.innerHTML = `
-            <div class="flex items-center justify-between w-full">
-                <span class="text-4xl font-bold text-green-800">${formatPrice(product.price)}</span>
-                <div class="flex flex-col items-end">
-                    <span class="text-sm text-gray-400 line-through">${formatPrice(product.originalPrice)}</span>
-                    <span class="text-xs text-red-600 font-semibold">
-                        Ahorra ${formatPrice(product.originalPrice - product.price)}
-                    </span>
-                </div>
-            </div>
-        `;
-    } else {
-        priceContainer.textContent = formatPrice(product.price);
-    }
+        if (hasDiscount) {
+            priceContainer.parentElement.innerHTML = `
+                <div class="flex items-center justify-between w-full">
+                    <span class="text-4xl font-bold text-green-800">${formatPrice(product.price)}</span>
+                    <div class="flex flex-col items-end">
+                        <span class="text-sm text-gray-400 line-through">${formatPrice(product.originalPrice)}</span>
+                        <span class="text-xs text-red-600 font-semibold">
+                            Ahorra ${formatPrice(product.originalPrice - product.price)}
+                        </span>
+                    </div>
+                </div>`;
+        } else {
+            priceContainer.textContent = formatPrice(product.price);
+        }
     }
 
-    // Renderizar estrellas interactivas
+    // ── Estrellas ──
     if (typeof renderStarsInteractive === 'function') {
         renderStarsInteractive(
             product._id || product.id,
@@ -146,12 +138,61 @@ function updateProductInfo(product) {
             product.rating?.count   || 0
         );
     }
+
+// ── INFORMACIÓN GENERAL ──
+    const allDetails = document.querySelectorAll('details');
     
-    // Descripción en el apartado "Información"
-    const infoDetails = document.querySelector('details[open] .mt-4');
-    if (infoDetails && product.description) {
-        infoDetails.textContent = product.description;
-    }
+    allDetails.forEach(detail => {
+        const summary = detail.querySelector('summary span');
+        if (!summary) return;
+        const title = summary.textContent.trim().toLowerCase();
+
+        // Sección "Información"
+        if (title.includes('información')) {
+            const infoContent = detail.querySelector('div');
+            if (infoContent) {
+                const aiText = product.aiInfo?.generalInfo;
+                if (aiText) {
+                    infoContent.innerHTML = `<p class="text-gray-700 leading-relaxed">${aiText}</p>`;
+                } else if (product.description) {
+                    infoContent.innerHTML = `<p class="text-gray-700 leading-relaxed">${product.description}</p>`;
+                }
+            }
+        }
+
+        // Sección "Guía de cuidado"
+        if (title.includes('cuidado')) {
+            const careContent = detail.querySelector('div');
+            if (careContent) {
+                const care = product.aiInfo?.careGuide;
+
+                if (care) {
+                    const noAplica = (val) => !val || val.toLowerCase().includes('no aplica');
+                    const rows = [
+                        { icon: '☀️', label: 'Luz',        value: care.luz },
+                        { icon: '💧', label: 'Riego',       value: care.riego },
+                        { icon: '🌱', label: 'Suelo',       value: care.suelo },
+                        { icon: '🌡️', label: 'Temperatura', value: care.temperatura },
+                        { icon: '💡', label: 'Consejos',    value: care.consejos }
+                    ].filter(r => !noAplica(r.value));
+
+                    if (rows.length > 0) {
+                        careContent.innerHTML = rows.map(r => `
+                            <div class="flex gap-3 py-2 border-b border-gray-100 last:border-0">
+                                <span class="text-xl flex-shrink-0">${r.icon}</span>
+                                <div>
+                                    <span class="font-semibold text-gray-800">${r.label}:</span>
+                                    <span class="text-gray-600 ml-1">${r.value}</span>
+                                </div>
+                            </div>
+                        `).join('');
+                    } else {
+                        careContent.innerHTML = `<p class="text-gray-500 italic text-sm">Información de cuidado no disponible.</p>`;
+                    }
+                }
+            }
+        }
+    });
 }
 
 /**
@@ -266,50 +307,40 @@ window.toggleCurrentProductFavorite = function() {
 function updateFavoriteButtonState() {
     const favButton = document.querySelector('.fav');
     
-    if (!favButton) {
-        console.warn('⚠️ Botón de favoritos no encontrado');
-        return;
-    }
-    
-    if (!currentProduct) {
-        console.warn('⚠️ Producto no cargado aún');
-        return;
-    }
+    if (!favButton || !currentProduct) return;
     
     const productId = currentProduct._id || currentProduct.id;
     
-    // Verificar si isFavorite está disponible
     let isFav = false;
     if (typeof window.isFavorite === 'function') {
         isFav = window.isFavorite(productId);
-    } else {
-        console.warn('⚠️ Función isFavorite no disponible');
     }
     
     console.log(`💚 Producto ${productId} es favorito:`, isFav);
     
+    const svgFilled = `<svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+    </svg>`;
+
+    const svgEmpty = `<svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+    </svg>`;
+
     if (isFav) {
-        favButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-        </svg>`;
-        favButton.classList.add('text-red-500' );
+        favButton.innerHTML = svgFilled;
+        // ✅ Quitar gris, poner rojo
+        favButton.classList.remove('text-gray-400');
+        favButton.classList.add('text-red-500');
     } else {
-        favButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-        </svg>`;
+        favButton.innerHTML = svgEmpty;
+        // ✅ Quitar rojo, poner gris
         favButton.classList.remove('text-red-500');
         favButton.classList.add('text-gray-400');
     }
-        
-    // ⚠️ IMPORTANTE: Remover eventos anteriores para evitar duplicados
-    favButton.onclick = null;
     
-    // Agregar nuevo event listener
     favButton.onclick = window.toggleCurrentProductFavorite;
     favButton.style.cursor = 'pointer';
     favButton.classList.add('transition-all', 'duration-200', 'hover:scale-105');
-    
-    console.log('✅ Botón de favoritos actualizado');
 }
 
 // =============================================
