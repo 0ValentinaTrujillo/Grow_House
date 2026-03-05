@@ -7,10 +7,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="../styles/output.css">  
+    <link rel="stylesheet" href="../styles/styles.css"> 
     <style>
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             min-height: 100vh;
         }
         
@@ -26,15 +27,7 @@
         .gradient-bg {
             background: linear-gradient(135deg, #2c7611, #317319, #2c7611);
         }
-        
-        .page-header {
-            background: linear-gradient(135deg, #1e7e34, #28a745);
-            padding: 3rem 0;
-            color: white;
-            position: relative;
-            overflow: hidden;
-        }
-        
+
         .page-header::before {
             content: '';
             position: absolute;
@@ -89,7 +82,7 @@
         }
     </style>
 </head>
-<body class="bg-gray-50 font-sans antialiased">
+<body class="bg-white font-sans antialiased">
 <!-- Header/Navegación -->
     <!-- Header/Navegación -->
     <header class="bg-white backdrop-blur-md shadow-xl border-b border-green-100 sticky top-0 z-50">
@@ -154,27 +147,6 @@
                                 d="M4 6h16M4 12h16M4 18h16"></path>
                         </svg>
                     </button>
-                    <!-- Carrito con Font Awesome (MEJORADO) -->
-                    <a href="carrito.html" class="relative group">
-                        <div
-                            class="relative p-3 rounded-xl bg-gradient-to-br from-green-50 to-indigo-50 group-hover:from-green-50 group-hover:to-green-400 transition-all duration-300 transform group-hover:scale-110 group-hover:shadow-lg">
-                            <!-- Icono de Font Awesome -->
-                            <i
-                                class="fas fa-shopping-cart text-xl text-green-800 group-hover:text-green-700 transition-colors duration-300"></i>
-
-                            <!-- Contador con animación - AGRANDADO v2.0 -->
-                            <span id="cart-counter"
-                                class="absolute -top-2 -right-2 bg-gradient-to-r from-red-500 to-pink-500 text-gray-700 text-sm font-bold rounded-full min-w-[28px] h-[28px] flex items-center justify-center px-2 shadow-lg border-3 border-white transform transition-transform group-hover:scale-110"
-                                style="display: none; font-size: 14px;">
-                                0
-                            </span>
-
-                            <!-- Indicador de hover -->
-                            <div
-                                class="absolute inset-0 rounded-xl bg-green-600 opacity-0 group-hover:opacity-10 transition-opacity duration-300">
-                            </div>
-                        </div>
-                    </a>
                     <!--Carrito-->
                     <a href="carrito.html" class="relative flex items-center justify-center">
                         <i class="fas fa-shopping-cart text-xl text-gray-600 hover:text-gray-700 transition-colors duration-200">
@@ -185,6 +157,19 @@
                             0
                         </span>
                     </a>
+                    <!-- 🔔 Notificaciones (al lado del Carrito) -->
+                    <li class="relative list-none ml-2">
+                        <button id="btnNotificaciones" class="hover:text-green-800 relative">
+                            <i class="fa-solid fa-bell text-xl text-gray-600 hover:text-gray-700 transition-colors duration-200"></i>
+                        </button>
+
+                        <!-- Ventana emergente Notificaciones -->
+                        <div id="popupNotificaciones"
+                            class="hidden absolute right-0 mt-2 w-64 bg-white shadow-lg p-4 rounded-lg border border-gray-200">
+                            <h3 class="font-semibold text-lg mb-2">Notificaciones</h3>
+                            <p class="text-sm text-gray-600">Aún no tienes notificaciones.</p>
+                        </div>
+                    </li>
                     <!-- MENÚ DE USUARIO - CORREGIDO v2.0 -->
                     <div id="user-menu-container" style="display: none; position: relative;">
                         <button id="user-menu-button"
@@ -320,26 +305,25 @@
         </nav>
     </header>
 
-    <!-- Header de la página -->
-    <div class="page-header relative">
-        <div class="max-w-7xl mx-auto px-6 relative z-10">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h1 class="text-4xl font-bold mb-2 flex items-center">
-                        <i class="fas fa-heart mr-4 text-red-200"></i>
-                        Mis Favoritos
-                    </h1>
-                    <p class="text-green-100 text-lg">
-                        Tus productos guardados con amor 💚
-                    </p>
-                </div>
-                <div class="text-right">
-                    <div class="text-5xl font-bold" id="favorites-counter-big">0</div>
-                    <div class="text-sm text-green-100">productos guardados</div>
-                </div>
+<!-- Header de la página -->
+<div class="relative pt-10 pb-10 px-10" >
+    <div class="mx-auto px-10 relative z-10">  
+        <div class="flex items-center justify-between">
+            <div class="mt-6">  
+                <h1 class="text-4xl font-bold mb-2 flex items-center">
+                    Mis Favoritos
+                </h1>
+                <p class="text-gray-500 text-lg">
+                    Tus productos guardados con amor ❤️
+                </p>
+            </div>
+            <div class="text-right mt-6">
+                <div class="text-5xl font-bold" id="favorites-counter-big">0</div>
+                <div class="text-sm text-gray-500">productos guardados</div>
             </div>
         </div>
     </div>
+</div>
 
     <!-- Contenido principal -->
     <div class="max-w-7xl mx-auto px-6 py-12">
@@ -393,12 +377,77 @@
         </div>
     </div>
 
-    <!-- Footer (simplificado) -->
-    <footer class="bg-gray-800 text-white py-8 mt-20">
-        <div class="max-w-7xl mx-auto px-6 text-center">
-            <p class="text-gray-400">
-                © 2024 Grow House. Todos los derechos reservados.
-            </p>
+    <footer id="contacto" class="border-t-2 border-green-800 pt-6 bg-white py-10 mt-2">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+                <!-- Logo y descripción -->
+                <div class="col-span-1 md:col-span-2">
+                    <h3 class="text-3xl font-bold mb-4 text-green-800">Grow House</h3>
+                    <p class="text-gray-900 mb-6 leading-relaxed">
+                        Tu destino para productos de cultivo indoor de alta calidad. Cultiva tu pasión con tecnología y
+                        naturaleza.
+                    </p>
+                    <!-- Redes sociales -->
+                    <div class="flex space-x-4 mt-5">
+                        <!-- FB -->
+                        <a href="#" class="w-14 h-14 flex items-center justify-center rounded-full 
+                                bg-gradient-to-br from-blue-500 to-blue-700 
+                                shadow-lg shadow-blue-900/30
+                                hover:scale-125 hover:shadow-blue-600/50
+                                transition-all duration-300">
+                            <i class="fab fa-facebook-f text-2xl text-white"></i>
+                        </a>
+
+                        <!-- IG -->
+                        <a href="#" class="w-14 h-14 flex items-center justify-center rounded-full 
+                                bg-gradient-to-br from-pink-500 via-purple-500 to-yellow-500
+                                shadow-lg shadow-purple-900/30
+                                hover:scale-125 hover:shadow-pink-600/50
+                                transition-all duration-300">
+                            <i class="fab fa-instagram text-2xl text-white"></i>
+                        </a>
+
+                        <!-- WhatsApp -->
+                        <a href="#" class="w-14 h-14 flex items-center justify-center rounded-full 
+                                bg-gradient-to-br from-green-400 to-green-600 
+                                shadow-lg shadow-green-900/30
+                                hover:scale-125 hover:shadow-green-500/50
+                                transition-all duration-300">
+                            <i class="fab fa-whatsapp text-2xl text-white"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Enlaces rápidos -->
+                <div>
+                    <h4 class="text-lg font-semibold mb-6 text-green-800">Enlaces Rápidos</h4>
+                    <ul class="space-y-2">
+                        <li><a href="productos.html" class="text-gray-900 hover:text-green-700 transition">Productos</a></li>
+                        <li><a href="index.html#categorias" class="text-gray-900 hover:text-green-700 transition">Categorías</a></li>
+                        <li><a href="carrito.html" class="text-gray-900 hover:text-green-700 transition">Carrito</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contacto -->
+                <div>
+                    <h4 class="text-lg font-semibold mb-6 text-green-800">Contacto</h4>
+                    <ul class="space-y-2 text-gray-900">
+                        <li>📧 info@growhouse.com</li>
+                        <li>📱 +57 301 234 5678</li>
+                        <li>📍 Pital-Huila, Colombia</li>
+                        <li>🕒 Lun - Sáb: 9AM - 9PM</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Línea final -->
+            <div class="border-t border-green-800 pt-2 text-center">
+                <p class="text-gray-900">
+                    © 2024 Grow House. Todos los derechos reservados |
+                    <a href="#" class="hover:text-white transition">Política de Privacidad</a> |
+                    <a href="#" class="hover:text-white transition">Términos de Servicio</a>
+                </p>
+            </div>
         </div>
     </footer>
 
@@ -426,7 +475,73 @@
     <script src="../scripts/api.js"></script>
     <script src="../scripts/favoritos.js"></script>
     <script src="../scripts/productos-api.js"></script>
+
+    <script src="../scripts/main.js"></script>
     
+        <script>
+        // Animación para el contador del carrito
+        document.addEventListener('DOMContentLoaded', function () {
+            const cartCounter = document.getElementById('cart-counter');
+
+            // Observer para animar el contador cuando cambie
+            const observer = new MutationObserver(function (mutations) {
+                mutations.forEach(function (mutation) {
+                    if (mutation.type === 'childList' || mutation.type === 'characterData') {
+                        const count = parseInt(cartCounter.textContent);
+                        if (count > 0) {
+                            cartCounter.style.transform = 'scale(1)';
+                            cartCounter.classList.remove('scale-0');
+                            // Animación de bounce
+                            cartCounter.animate([
+                                { transform: 'scale(1)' },
+                                { transform: 'scale(1.3)' },
+                                { transform: 'scale(1)' }
+                            ], {
+                                duration: 300,
+                                easing: 'ease-out'
+                            });
+                        } else {
+                            cartCounter.style.transform = 'scale(0)';
+                            cartCounter.classList.add('scale-0');
+                        }
+                    }
+                });
+            });
+
+            observer.observe(cartCounter, {
+                childList: true,
+                characterData: true,
+                subtree: true
+            });
+        });
+        // --- ELEMENTOS ---
+        const btnNovedades = document.getElementById("btnNovedades");
+        const popupNovedades = document.getElementById("popupNovedades");
+
+        const btnNotificaciones = document.getElementById("btnNotificaciones");
+        const popupNotificaciones = document.getElementById("popupNotificaciones");
+
+        // Función: cerrar todas las ventanas
+        function cerrarPopups() {
+            popupNovedades.classList.add("hidden");
+            popupNotificaciones.classList.add("hidden");
+        }
+
+        // --- EVENTOS ---
+
+        btnNovedades.addEventListener("click", (e) => {
+            e.stopPropagation();
+            cerrarPopups();
+            popupNovedades.classList.toggle("hidden");
+        });
+
+        btnNotificaciones.addEventListener("click", (e) => {
+            e.stopPropagation();
+            cerrarPopups();
+            popupNotificaciones.classList.toggle("hidden");
+        });
+    </script>
+
     <script>
         // Actualizar contador grande cuando cambian los favoritos
         window.addEventListener('favoritesUpdated', (e) => {

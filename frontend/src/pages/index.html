@@ -632,7 +632,39 @@
 
     <script src="../scripts/main.js"></script>
 
+        <!-- Submenú Seguridad -->
+    <div id="submenu-seguridad" class="floating-submenu">
+        <div class="px-4 py-2 border-b border-gray-100">
+            <p class="text-gray-700 text-sm font-medium">Seguridad</p>
+        </div>
+        <a href="recoverpassword.html" class="flex items-center px-4 py-2.5 hover:bg-green-50 transition-colors">
+            <span class="mr-3">🔑</span>
+            <span class="text-gray-700 text-sm">Cambiar Contraseña</span>
+        </a>
+        <a href="privacidad.html" class="flex items-center px-4 py-2.5 hover:bg-green-50 transition-colors">
+            <span class="mr-3">🛡️</span>
+            <span class="text-gray-700 text-sm">Privacidad</span>
+        </a>
+    </div>
 
+    <!-- Submenú Zuri -->
+    <div id="submenu-zuri" class="floating-submenu">
+        <div class="px-4 py-2 border-b border-gray-100">
+            <p class="text-gray-700 text-sm font-medium">Zuri</p>
+        </div>
+        <a href="zuri-chat.html" class="flex items-center px-4 py-2.5 hover:bg-green-50 transition-colors">
+            <span class="mr-3">📋</span>
+            <span class="text-gray-700 text-sm">Registrar plantas</span>
+        </a>
+        <a href="zuri-plantas.html" class="flex items-center px-4 py-2.5 hover:bg-green-50 transition-colors">
+            <span class="mr-3">🪴</span>
+            <span class="text-gray-700 text-sm">Mis plantas</span>
+        </a>
+        <a href="zuri-consejos.html" class="flex items-center px-4 py-2.5 hover:bg-green-50 transition-colors">
+            <span class="mr-3">💡</span>
+            <span class="text-gray-700 text-sm">Transformar espacios</span>
+        </a>
+    </div>
 
     <!-- Script adicional para animaciones -->
     <script>
@@ -698,39 +730,6 @@
             popupNotificaciones.classList.toggle("hidden");
         });
     </script>
-    <!-- Submenú Seguridad -->
-    <div id="submenu-seguridad" class="floating-submenu">
-        <div class="px-4 py-2 border-b border-gray-100">
-            <p class="text-gray-700 text-sm font-medium">Seguridad</p>
-        </div>
-        <a href="recoverpassword.html" class="flex items-center px-4 py-2.5 hover:bg-green-50 transition-colors">
-            <span class="mr-3">🔑</span>
-            <span class="text-gray-700 text-sm">Cambiar Contraseña</span>
-        </a>
-        <a href="privacidad.html" class="flex items-center px-4 py-2.5 hover:bg-green-50 transition-colors">
-            <span class="mr-3">🛡️</span>
-            <span class="text-gray-700 text-sm">Privacidad</span>
-        </a>
-    </div>
-
-    <!-- Submenú Zuri -->
-    <div id="submenu-zuri" class="floating-submenu">
-        <div class="px-4 py-2 border-b border-gray-100">
-            <p class="text-gray-700 text-sm font-medium">Zuri</p>
-        </div>
-        <a href="zuri-chat.html" class="flex items-center px-4 py-2.5 hover:bg-green-50 transition-colors">
-            <span class="mr-3">📋</span>
-            <span class="text-gray-700 text-sm">Registrar plantas</span>
-        </a>
-        <a href="zuri-plantas.html" class="flex items-center px-4 py-2.5 hover:bg-green-50 transition-colors">
-            <span class="mr-3">🪴</span>
-            <span class="text-gray-700 text-sm">Mis plantas</span>
-        </a>
-        <a href="zuri-consejos.html" class="flex items-center px-4 py-2.5 hover:bg-green-50 transition-colors">
-            <span class="mr-3">💡</span>
-            <span class="text-gray-700 text-sm">Transformar espacios</span>
-        </a>
-    </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
@@ -753,6 +752,69 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 </script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const container = document.getElementById('user-menu-container');
+    let hideTimeout = null;
+
+    function hideAllSubmenus() {
+        document.querySelectorAll('.floating-submenu').forEach(s => s.classList.remove('visible'));
+        document.querySelectorAll('.has-submenu').forEach(r => r.classList.remove('active'));
+    }
+
+    function positionAndShow(triggerEl, submenuId) {
+        clearTimeout(hideTimeout);
+        hideAllSubmenus();
+        const submenu = document.getElementById(submenuId);
+        if (!submenu) return;
+
+        submenu.classList.add('visible');
+        triggerEl.classList.add('active');
+
+        const rect = triggerEl.getBoundingClientRect();
+        const smW  = submenu.offsetWidth;
+        const smH  = submenu.offsetHeight;
+        const winH = window.innerHeight;
+
+        let left = rect.left - smW - 6;
+        if (left < 6) left = rect.right + 6;
+
+        let top = rect.top;
+        if (top + smH > winH - 8) top = winH - smH - 8;
+        if (top < 8) top = 8;
+
+        submenu.style.left = left + 'px';
+        submenu.style.top  = top  + 'px';
+    }
+
+    document.querySelectorAll('.has-submenu').forEach(trigger => {
+        const submenuId = trigger.dataset.submenu;
+        const submenu   = document.getElementById(submenuId);
+
+        trigger.addEventListener('mouseenter', () => positionAndShow(trigger, submenuId));
+        trigger.addEventListener('mouseleave', () => {
+            hideTimeout = setTimeout(() => {
+                if (submenu && !submenu.matches(':hover')) hideAllSubmenus();
+            }, 100);
+        });
+    });
+
+    document.querySelectorAll('.floating-submenu').forEach(submenu => {
+        submenu.addEventListener('mouseenter', () => clearTimeout(hideTimeout));
+        submenu.addEventListener('mouseleave', () => {
+            hideTimeout = setTimeout(hideAllSubmenus, 100);
+        });
+    });
+
+    document.addEventListener('click', (e) => {
+        if (container && !container.contains(e.target) && !e.target.closest('.floating-submenu')) {
+            hideAllSubmenus();
+        }
+    });
+});
+</script>
+
 <script>
 async function cargarProductosDestacados() {
     const grid = document.getElementById('featured-grid');
@@ -791,7 +853,6 @@ async function cargarProductosDestacados() {
             </div>`;
     }
 }
-
 document.addEventListener('DOMContentLoaded', cargarProductosDestacados);
 </script>
 </body>
