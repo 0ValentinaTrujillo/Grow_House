@@ -3,6 +3,11 @@
 // =============================================
 
 require('dotenv').config(); // Cargar variables de entorno PRIMERO
+
+// ✅ Verificar API key sin exponerla
+console.log('OPENAI_API_KEY:', process.env.OPENAI_API_KEY ? '✓ Configurada' : '✗ No encontrada');
+
+
 const express = require('express');
 const adminRoutes = require('./routes/admin.routes');
 const cors = require('cors');
@@ -14,6 +19,9 @@ const xss = require('xss-clean');
 const helmet = require('helmet');
 const authRoutes = require("./routes/auth");
 const mongoose = require("mongoose");
+
+// ruta chatbot 
+const chatbotRoutes = require('./routes/chatbot');
 
 console.log('🚀 Iniciando Grow House Backend...');
 
@@ -50,6 +58,7 @@ app.use((req, res, next) => {
     if (url.includes('/users')) requestType = '👤';
     if (url.includes('/orders')) requestType = '🛒';
     if (url.includes('/auth')) requestType = '🔐';
+    if (url.includes('/chatbot')) requestType = '🤖'; 
     if (url.includes('/health')) requestType = '💚';
     
     console.log(`${requestType} ${timestamp} - ${method} ${url} - IP: ${ip}`);
@@ -88,7 +97,8 @@ const allowedOrigins = process.env.NODE_ENV === 'production'
       'http://localhost:5173',
       'http://localhost:4200',
       'http://localhost:5500',
-      'http://127.0.0.1:5500'
+      'http://127.0.0.1:5500',      
+      'http://127.0.0.1:5501'
     ];
 
 app.use(cors({
@@ -151,6 +161,9 @@ app.use('/api/orders', require('./routes/orders'));
 
 // 🔥RUTA DE ADMINISTRADOR
 app.use('/api/admin', adminRoutes);
+
+// IA
+app.use('/api/chatbot', chatbotRoutes);
 
 console.log('✅ Rutas activas:');
 console.log('   📱 /api/products - e productos');
