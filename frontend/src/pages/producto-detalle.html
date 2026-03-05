@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grow House | Detalles del Producto</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="../styles/output.css"> 
+    <style>
+        body{
+            font-family: 'Poppins', sans-serif;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #2c7611, #317319, #2c7611)
+        }
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .hover-lift {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .hover-lift:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        .product-card {
+            background: linear-gradient(145deg, #ffffff, #f8fafc);
+            border: 1px solid rgba(147, 51, 234, 0.1);
+        }
+        .product-card:hover {
+            border-color: rgba(147, 51, 234, 0.3);
+            box-shadow: 0 20px 40px rgba(147, 51, 234, 0.15);
+        }
+        .price-highlight {
+            color: #207939;
+            font-weight: 800;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #207719, #46d560);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #207719, #46d560);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(4, 111, 26, 0.978);
+        }
+
+        :root {
+            --color-principal: #207719;
+            --color-hover: #207719;
+        }
+
+        .texto-verde {
+            color: var(--color-principal);
+        }
+
+        .texto-verde:hover {
+            color: var(--color-hover);
+        }
+
+        .bg-verde {
+            background-color: var(--color-principal);
+        }
+
+        .bg-verde:hover {
+            background-color: var(--color-hover);
+        }
+        
+        /* Estilos para botón de favoritos */
+        .fav {
+            cursor: pointer;
+            padding: 12px 24px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+            transition: all 0.3s ease;
+            display: inline-block;
+            font-weight: 600;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+        
+        .fav:hover {
+            background: linear-gradient(135deg, #fef2f2, #fee2e2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+        
+        .fav.active {
+            background: linear-gradient(135deg, #fef2f2, #fee2e2);
+            color: #dc2626;
+        }
+        
+        /* Comentarios */
+        .comment-item {
+            transition: all 0.2s ease;
+        }
+        
+        .comment-item:hover {
+            background-color: #f9fafb;
+        }
+        
+        /* Scroll suave */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans antialiased">
+    
+<!-- Header/Navegación -->
+    <header class="bg-white backdrop-blur-md shadow-xl border-b border-green-100 sticky top-0 z-50">
+        <nav class="navegation mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center text-2xl font-bold">
+                    <img src="../assets/images/Green and White Plants Organic Logo.png" alt="Logo" class="w-12 h-12 rounded-full object-cover mr-4">
+                    <a href="index.html" class="text-green-800 font-bold">Grow House</a>
+                </div>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex space-x-8">
+                    <a href="index.html" class="text-gray-700 hover:text-green-800 font-medium transition-colors duration-200 relative group">
+                        Inicio
+                        <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-800 transition-all duration-300 group-hover:w-full"></span>
+                    </a>
+                    <a href="productos.html" class="text-gray-700 hover:text-green-800 font-medium transition-colors duration-200 relative group">
+                        Productos
+                        <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-800 transition-all duration-300 group-hover:w-full"></span>
+                    </a>
+                    <a href="index.html#categorias" class="text-gray-700 hover:text-green-800 font-medium transition-colors duration-200 relative group">
+                        Categorías
+                        <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-800 transition-all duration-300 group-hover:w-full"></span>
+                    </a>    
+                    <a href="index.html#contacto" class="text-gray-700 hover:text-green-800 font-medium transition-colors duration-200 relative group">
+                        Contacto 
+                        <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-800 transition-all duration-300 group-hover:w-full"></span>
+                    </a>
+                    <!--Novedades (al lado de Contacto) -->
+                    <li class="relative list-none">
+                        <button id="btnNovedades" 
+                            class="text-gray-700 hover:text-green-800 font-medium transition-colors duration-200 relative group">
+                            Novedades
+                            <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-800 transition-all duration-300 group-hover:w-full"></span>
+                        </button>
+
+                        <!-- Ventana emergente Novedades -->
+                        <div id="popupNovedades"
+                            class="hidden absolute left-0 mt-2 w-64 bg-white shadow-lg p-4 rounded-lg border border-gray-200">
+                            <h3 class="font-semibold text-lg mb-2">Últimas novedades</h3>
+                            <p class="text-sm text-gray-600">Nuevos productos disponibles.</p>
+                        </div>
+                    </li>
+                </div>
+                <!-- Acciones del usuario -->
+                <div class="flex items-center space-x-4">
+                <!-- Mobile menu button -->
+                <button class="md:hidden text-gray-700 hover:text-green-800 transition-colors duration-200" id="mobile-menu-button">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+                    <!-- Carrito con Font Awesome (MEJORADO) -->
+                    <a href="carrito.html" class="relative group">
+                        <div class="relative p-3 rounded-xl bg-gradient-to-br from-green-50 to-indigo-50 group-hover:from-green-50 group-hover:to-green-400 transition-all duration-300 transform group-hover:scale-110 group-hover:shadow-lg">
+                            <!-- Icono de Font Awesome -->
+                            <i class="fas fa-shopping-cart text-xl text-green-800 group-hover:text-green-700 transition-colors duration-300"></i> 
+                            
+                            <!-- Contador con animación - AGRANDADO v2.0 -->
+                            <span id="cart-counter" class="absolute -top-2 -right-2 bg-gradient-to-r from-red-500 to-pink-500 text-gray-700 text-sm font-bold rounded-full min-w-[28px] h-[28px] flex items-center justify-center px-2 shadow-lg border-3 border-white transform transition-transform group-hover:scale-110" style="display: none; font-size: 14px;">
+                                0
+                            </span>
+
+                            <!-- Indicador de hover -->
+                            <div class="absolute inset-0 rounded-xl bg-green-600 opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+                        </div>
+                    </a>
+                    <!-- 🔔 Notificaciones (al lado del Carrito) -->
+                    <li class="relative list-none ml-2">
+                        <button id="btnNotificaciones" class="hover:text-green-800 relative">
+                            <i class="fa-solid fa-bell text-xl text-gray-600"></i>
+                        </button>
+
+                        <!-- Ventana emergente Notificaciones -->
+                        <div id="popupNotificaciones"
+                            class="hidden absolute right-0 mt-2 w-64 bg-white shadow-lg p-4 rounded-lg border border-gray-200">
+                            <h3 class="font-semibold text-lg mb-2">Notificaciones</h3>
+                            <p class="text-sm text-gray-600">Aún no tienes notificaciones.</p>
+                        </div>
+                    </li>
+                    <!-- MENÚ DE USUARIO - CORREGIDO v2.0 -->
+                    <div id="user-menu-container" style="display: none; position: relative;">
+                        <button 
+                            id="user-menu-button"
+                            class="flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+                        >
+                            <div id="user-avatar-menu" class="w-8 h-8 bg-gradient-to-r from-green-800 to-green-700 rounded-full flex items-center justify-center text-white font-bold text-sm overflow-hidden">
+                                <img id="user-avatar-menu-image" src="" alt="Avatar" class="w-full h-full object-cover hidden">
+                                <span id="user-initials">U</span>
+                            </div>
+                            <span id="user-name" class="text-gray-700 font-medium hidden md:block">Usuario</span>
+                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+
+                        <!-- Dropdown Menu - POSICIONAMIENTO CORREGIDO v2.0 -->
+                        <div 
+                            id="user-dropdown"
+                            class="hidden border border-gray-100"
+                            style="position: absolute; top: 100%; right: 0; margin-top: 0.5rem; width: 16rem; background-color: white; border-radius: 0.75rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); padding: 0.5rem 0; z-index: 9999;"
+                        >
+                            <!-- Info del usuario en el dropdown -->
+                            <div class="px-4 py-3 border-b border-gray-100">
+                                <p id="dropdown-user-name" class="text-sm font-semibold text-gray-800">Nombre Usuario</p>
+                                <p id="dropdown-user-email" class="text-xs text-gray-500">email@ejemplo.com</p>
+                                <span id="dropdown-user-role" class="inline-block mt-2 px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
+                                    Cliente
+                                </span>
+                            </div>
+
+                            <!-- Opciones para ADMIN -->
+                            <div id="admin-options" style="display: none;">
+                                <a href="dashboard.html" class="flex items-center px-4 py-3 hover:bg-gray-50 transition-colors">
+                                    <svg class="w-5 h-5 mr-3 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                    </svg>
+                                    <span class="text-gray-700 text-sm font-medium">Dashboard</span>
+                                </a>
+                                <div class="border-t border-gray-100"></div>
+                            </div>
+
+                            <!-- Opciones comunes -->
+                            <a href="perfil.html" class="flex items-center px-4 py-3 hover:bg-gray-50 transition-colors">
+                                <svg class="w-5 h-5 mr-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                </svg>
+                                <span class="text-gray-700 text-sm font-medium">Datos Personales</span>
+                            </a>
+
+                            <a href="#seguridad.html" class="flex items-center px-4 py-3 hover:bg-gray-50 transition-colors">
+                                <svg class="w-5 h-5 mr-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2a5 5 0 00-5 5v2H6a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2v-8a2 2 0 00-2-2h-1V7a5 5 0 00-5-5zm-3 5a3 3 0 116 0v2H9V7z"/>
+                                </svg>
+                                <span class="text-gray-700 text-sm font-medium">Seguridad</span>
+                            </a>
+
+                            <a href="favoritos.html" class="flex items-center px-4 py-3 hover:bg-gray-50 transition-colors">
+                                <svg class="w-5 h-5 mr-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                                </svg>
+                                <span class="text-gray-700 text-sm font-medium">Favoritos</span>
+                            </a>
+
+                            <a href="mis-pedidos.html" class="flex items-center px-4 py-3 hover:bg-gray-50 transition-colors">
+                                <svg class="w-5 h-5 mr-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                                </svg>
+                                <span class="text-gray-700 text-sm font-medium">Mis Pedidos</span>
+                            </a>
+
+                            <a href="#zuri.html" class="flex items-center px-4 py-3 hover:bg-gray-50 transition-colors">
+                                <svg class="w-5 h-5 mr-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8C10 6 8 6 8 8C8 10 10 12 12 12C10 12 8 14 8 16C8 18 10 18 12 16C12 18 14 18 16 16C16 14 14 12 12 12C14 12 16 10 16 8C16 6 14 6 12 8Z M12 12C13 12 14 11 14 10C14 9 13 8 12 8C11 8 10 9 10 10C10 11 11 12 12 12Z M12 16L12 20"/>
+                                </svg>
+                                <span class="text-gray-700 text-sm font-medium">Zuri</span>
+                            </a>
+
+                            <div class="border-t border-gray-100 my-2"></div>
+
+                            <button 
+                                id="logout-button"
+                                class="w-full flex items-center px-4 py-3 hover:bg-red-50 transition-colors text-left"
+                            >
+                                <svg class="w-5 h-5 mr-3 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                                </svg>
+                                <span class="text-red-600 text-sm font-medium">Cerrar Sesión</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- BOTONES DE LOGIN/REGISTER - Solo visible si NO está logueado -->
+                    <div id="auth-buttons" class="flex items-center space-x-4">
+
+                        <!-- Iniciar Sesión -->
+                        <a href="login.html"
+                        class="px-6 py-2.5 font-medium text-green-800 border border-green-900 
+                                rounded-full bg-white/60 backdrop-blur-sm
+                                hover:bg-gray-50 hover:border-green-900
+                                transition-all duration-300 shadow-sm hover:shadow-md">
+                            Iniciar Sesión
+                        </a>
+
+                        <!-- Registrarse -->
+                        <a href="register.html"
+                        class="px-6 py-2.5 font-semibold text-white 
+                                rounded-full bg-gradient-to-r from-green-800 to-green-700
+                                hover:shadow-lg hover:scale-105
+                                transition-all duration-300">
+                            Registrarse
+                        </a> 
+                    </div>
+                </div>
+            </div>
+            <!-- Mobile Menu -->
+            <div class="md:hidden mt-4 hidden" id="mobile-menu">
+                <div class="flex flex-col space-y-3 pb-4 bg-white rounded-lg shadow-lg p-4 border border-green-100">
+
+                    <a href="index.html" class="text-gray-700 hover:text-green-800 py-2 px-3 rounded-lg hover:bg-green-50 transition-all duration-200">Inicio</a>
+
+                    <a href="productos.html" class="text-gray-700 hover:text-green-800 py-2 px-3 rounded-lg hover:bg-green-50 transition-all duration-200">Productos</a>
+
+                    <a href="index.html#categorias" class="text-gray-700 hover:text-green-800 py-2 px-3 rounded-lg hover:bg-green-50 transition-all duration-200">Categorías</a>
+
+                    <a href="index.html#contacto" class="text-gray-700 hover:text-green-800 py-2 px-3 rounded-lg hover:bg-green-50 transition-all duration-200">Contacto</a>
+
+                </div>
+            </div>           
+        </nav>
+    </header>
+
+    <!-- Contenedor de detalles del producto -->
+    <div class="container-details max-w-7xl mx-auto px-6 py-12">
+        <div class="content grid grid-cols-1 md:grid-cols-2 gap-12">
+            
+            <!-- LEFT CARD - Imagen y botón de agregar -->
+            <div class="justify-items-center" id="product-details">
+                <img src="https://jardineros.com.co/wp-content/uploads/2022/04/Romero-aroma%CC%81tica1.jpg" 
+                     alt="Producto" 
+                     class="rounded-2xl shadow-2xl mb-6 w-full max-w-md object-cover"
+                     style="max-height: 500px;">
+                
+                <div class="flex flex-col items-center text-center mb-4">
+                    <div class="text-2xl font-bold text-green-800">
+                        $0
+                    </div>
+                </div>  
+                
+                <button
+                    class="add-to-cart-btn bg-green-800 text-white w-40 py-2 rounded-lg 
+                        hover:bg-green-900 transition duration-300 flex items-center justify-center gap-2 text-sm"
+                    data-product-id="loading"
+                    data-product="loading"
+                    data-price="0"
+                    data-image="">
+                    <img src="../assets/icons/carro-de-compra.png" alt="" class="w-4 h-4">
+                    Agregar
+                </button>
+            </div>
+
+            <!-- RIGHT INFO - Información y detalles -->
+            <div>
+                <h2 class="text-5xl font-bold mb-3 text-gray-900 group-hover:text-green-800 transition-colors duration-300">
+                    Cargando...
+                </h2>
+                
+                <div class="stars mb-6">
+                    ⭐⭐⭐⭐⭐ <span style="color:#666; font-size:14px;">Cargando reseñas...</span>
+                </div>
+
+                <!-- Información del producto -->
+                <details open class="group bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden transition-all hover:shadow-md">
+                    <summary class="flex items-center justify-between text-xl font-semibold cursor-pointer p-6 text-green-800 hover:text-green-900 hover:bg-green-50 transition-colors">
+                        <span class="flex items-center gap-3">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            Información
+                        </span>
+                        <svg class="w-5 h-5 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </summary>
+                    <div class="mt-4 text-base leading-6 text-gray-700 bg-gray-50 p-4 rounded-lg">
+                        Cargando descripción del producto...
+                    </div>
+                </details>
+
+                <!-- Guía de cuidado -->
+                <details class="group bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden transition-all hover:shadow-md mt-4">
+                    <summary class="flex items-center justify-between text-xl font-semibold cursor-pointer p-6 text-green-800 hover:text-green-900 hover:bg-green-50 transition-colors">
+                        <span class="flex items-center gap-3">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                            </svg>
+                            Guía de cuidado
+                        </span>
+                        <svg class="w-5 h-5 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </summary>
+                    <div class="mt-4 text-base leading-6 text-gray-700 bg-gray-50 p-4 rounded-lg">
+                        <p><strong>Luz:</strong> Información disponible próximamente</p>
+                        <p><strong>Riego:</strong> Información disponible próximamente</p>
+                        <p><strong>Suelo:</strong> Información disponible próximamente</p>
+                    </div>
+                </details>
+
+                <!-- Comentarios -->
+                <details class="group bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden transition-all hover:shadow-md mt-4">
+                    <summary class="flex items-center justify-between text-xl font-semibold cursor-pointer p-6 text-green-800 hover:text-green-900 hover:bg-green-50 transition-colors">
+                        <span class="flex items-center gap-3">
+                            <span class="text-2xl">💬</span>
+                            Comentarios
+                        </span>
+                        <svg class="w-5 h-5 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </summary>
+                    <div class="mt-4 bg-gray-50 p-4 rounded-lg">
+                        <!-- LISTA DE COMENTARIOS -->
+                        <div class="space-y-3 max-h-96 overflow-y-auto" id="comments-list">
+                            <!-- Los comentarios se cargarán aquí dinámicamente -->
+                        </div>
+                        
+                        <!-- INPUT PARA NUEVO COMENTARIO -->
+                        <div class="mt-4 flex items-center gap-3">
+                            <input 
+                                id="new-comment" 
+                                type="text" 
+                                placeholder="Añade un comentario..." 
+                                class="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent"
+                                maxlength="500">
+
+                            <button 
+                                onclick="addComment()" 
+                                class="bg-green-800 text-white px-6 py-2 rounded-xl hover:bg-green-900 transition text-sm font-semibold whitespace-nowrap flex items-center gap-2">
+                                <i class="fas fa-paper-plane"></i>
+                                Publicar
+                            </button>
+                        </div>
+                    </div>
+                </details>
+
+                <!-- FAVORITOS (Ahora funcional) -->
+                <div 
+                    class="fav" 
+                    onclick="toggleCurrentProductFavorite()">
+                    🤍 Añadir a favoritos
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer id="contacto" class="border-t-2 border-green-800 pt-6 bg-[#fbfafa] py-10 mt-12">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+                <!-- Logo y descripción -->
+                <div class="col-span-1 md:col-span-2">
+                    <h3 class="text-3xl font-bold mb-4 text-green-800">Grow House</h3>
+                    <p class="text-gray-900 mb-6 leading-relaxed">
+                        Tu destino para productos de cultivo indoor de alta calidad. Cultiva tu pasión con tecnología y naturaleza.
+                    </p>
+                    
+                    <!-- Redes sociales -->
+                    <div class="flex space-x-4 mt-5">
+                        <a href="#" class="w-14 h-14 flex items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-blue-700 shadow-lg shadow-blue-900/30 hover:scale-125 hover:shadow-blue-600/50 transition-all duration-300">
+                            <i class="fab fa-facebook-f text-2xl text-white"></i>
+                        </a>
+                        <a href="#" class="w-14 h-14 flex items-center justify-center rounded-full bg-gradient-to-br from-pink-500 via-purple-500 to-yellow-500 shadow-lg shadow-purple-900/30 hover:scale-125 hover:shadow-pink-600/50 transition-all duration-300">
+                            <i class="fab fa-instagram text-2xl text-white"></i>
+                        </a>
+                        <a href="#" class="w-14 h-14 flex items-center justify-center rounded-full bg-gradient-to-br from-green-400 to-green-600 shadow-lg shadow-green-900/30 hover:scale-125 hover:shadow-green-500/50 transition-all duration-300">
+                            <i class="fab fa-whatsapp text-2xl text-white"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Enlaces rápidos -->
+                <div>
+                    <h4 class="text-lg font-semibold mb-6 text-green-800">Enlaces Rápidos</h4>
+                    <ul class="space-y-2">
+                        <li><a href="productos.html" class="text-gray-900 hover:text-green-700 transition">Productos</a></li>
+                        <li><a href="favoritos.html" class="text-gray-900 hover:text-green-700 transition">Favoritos</a></li>
+                        <li><a href="carrito.html" class="text-gray-900 hover:text-green-700 transition">Carrito</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contacto -->
+                <div>
+                    <h4 class="text-lg font-semibold mb-6 text-green-800">Contacto</h4>
+                    <ul class="space-y-2 text-gray-900">
+                        <li>📧 info@growhouse.com</li>
+                        <li>📱 +57 301 234 5678</li>
+                        <li>📍 Pital-Huila, Colombia</li>
+                        <li>🕒 Lun - Sáb: 9AM - 9PM</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Línea final -->
+            <div class="border-t border-green-800 pt-2 text-center">
+                <p class="text-gray-900">
+                    © 2024 Grow House. Todos los derechos reservados
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts principales en el orden correcto -->
+<script src="../scripts/auth-api.js"></script>
+<script src="../scripts/profile-image.js"></script>
+<script src="../scripts/navbar-avatar.js"></script>
+<script src="../scripts/ui-manager.js"></script>
+<script src="../scripts/session.js"></script>
+<script src="../scripts/novedades-notificaciones.js"></script>
+<script src="../scripts/carrito.js"></script>
+<script src="../scripts/api.js"></script>
+<script src="../scripts/favoritos.js"></script>
+<script src="../scripts/comment-filter.js"></script>
+<script src="../scripts/comentarios.js"></script>
+<script src="../scripts/producto-detalle-api.js"></script>
+</body>
+</html>

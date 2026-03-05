@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grow House | Carrito</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="../styles/output.css"> 
+    <link rel="stylesheet" href="../styles/styles.css">  
+    <style>
+        body{
+            font-family: 'Poppins', sans-serif;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #2c7611, #317319, #2c7611)
+        }
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .hover-lift {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .hover-lift:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px -12px rgba(100, 221, 96, 0.822);
+        }
+        .category-hover {
+            transition: all 0.4s ease;
+        }
+        .category-hover:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 30px 60px rgba(184, 253, 181, 0.63);
+        }
+        .product-card {
+            background: linear-gradient(145deg, #ffffff, #f8fafc);
+            border: 1px solid rgba(184, 253, 181, 0.63);
+        }
+        .product-card:hover {
+            border-color: rgba(184, 253, 181, 0.63);
+            box-shadow: 0 20px 40px rgba(184, 253, 181, 0.63);
+        }
+        .price-highlight {
+            color: #207939;
+            font-weight: 800;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #207719, #46d560);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #207719, #46d560);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(4, 111, 26, 0.978);
+        }
+
+        :root {
+            --color-principal: #207719; /* verde principal */
+            --color-hover: #207719;    /* verde más oscuro */
+        }
+
+        .texto-verde {
+            color: var(--color-principal);
+        }
+
+        .texto-verde:hover {
+            color: var(--color-hover);
+        }
+
+        .bg-verde {
+            background-color: var(--color-principal);
+        }
+
+        .bg-verde:hover {
+            background-color: var(--color-hover);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans antialiased">
+<!-- Header/Navegación -->
+    <header class="bg-white backdrop-blur-md shadow-xl border-b border-green-100 sticky top-0 z-50">
+        <nav class="navegation mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center text-2xl font-bold">
+                    <img src="../assets/images/Green and White Plants Organic Logo.png" alt="Logo" class="w-12 h-12 rounded-full object-cover mr-4">
+                    <a href="index.html" class="text-green-800 font-bold">Grow House</a>
+                </div>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex space-x-8">
+                    <a href="index.html" class="text-gray-700 hover:text-green-800 font-medium transition-colors duration-200 relative group">
+                        Inicio
+                        <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-800 transition-all duration-300 group-hover:w-full"></span>
+                    </a>
+                    <a href="productos.html" class="text-gray-700 hover:text-green-800 font-medium transition-colors duration-200 relative group">
+                        Productos
+                        <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-800 transition-all duration-300 group-hover:w-full"></span>
+                    </a>
+                    <a href="index.html#categorias" class="text-gray-700 hover:text-green-800 font-medium transition-colors duration-200 relative group">
+                        Categorías
+                        <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-800 transition-all duration-300 group-hover:w-full"></span>
+                    </a>
+                    <a href="carrito.html#contacto" class="text-gray-700 hover:text-green-800 font-medium transition-colors duration-200 relative group">
+                        Contacto 
+                        <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-800 transition-all duration-300 group-hover:w-full"></span>
+                    </a>
+                    <li class="relative list-none">
+                        <button id="btnNovedades" 
+                            class="text-gray-700 hover:text-green-800 font-medium transition-colors duration-200 relative group">
+                            Novedades
+                            <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-800 transition-all duration-300 group-hover:w-full"></span>
+                        </button>
+
+                        <!-- Ventana emergente Novedades -->
+                        <div id="popupNovedades"
+                            class="hidden absolute left-0 mt-2 w-64 bg-white shadow-lg p-4 rounded-lg border border-gray-200">
+                            <h3 class="font-semibold text-lg mb-2">Últimas novedades</h3>
+                            <p class="text-sm text-gray-600">Nuevos productos disponibles.</p>
+                        </div>
+                    </li>
+                </div>
+                <!-- Acciones del usuario -->
+                <div class="flex items-center space-x-4">
+                <!-- Mobile menu button -->
+                <button class="md:hidden text-gray-700 hover:text-green-800 transition-colors duration-200" id="mobile-menu-button">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+                    <!-- Carrito con Font Awesome (MEJORADO) -->
+                    <a href="carrito.html" class="relative group">
+                        <div class="relative p-3 rounded-xl bg-gradient-to-br from-green-50 to-indigo-50 group-hover:from-green-50 group-hover:to-indigo-100 transition-all duration-300 transform group-hover:scale-110 group-hover:shadow-lg">
+                            <!-- Icono de Font Awesome -->
+                            <i class="fas fa-shopping-cart text-xl text-green-800 group-hover:text-green-700 transition-colors duration-300"></i>
+                            
+                            <!-- Contador con animación - AGRANDADO v2.0 -->
+                            <span id="cart-counter" class="absolute -top-2 -right-2 bg-gradient-to-r from-red-500 to-pink-500 text-gray-700 text-sm font-bold rounded-full min-w-[28px] h-[28px] flex items-center justify-center px-2 shadow-lg border-3 border-white transform transition-transform group-hover:scale-110" style="display: none; font-size: 14px;">
+                                0
+                            </span>
+
+                            <!-- Indicador de hover -->
+                            <div class="absolute inset-0 rounded-xl bg-green-600 opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+                        </div>
+                    </a>
+
+                    <!-- MENÚ DE USUARIO - CORREGIDO v2.0 -->
+                    <div id="user-menu-container" style="display: none; position: relative;">
+                        <button 
+                            id="user-menu-button"
+                            class="flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+                        >
+                            <div id="user-avatar-menu" class="w-8 h-8 bg-gradient-to-r from-green-800 to-green-700 rounded-full flex items-center justify-center text-white font-bold text-sm overflow-hidden">
+                                <img id="user-avatar-menu-image" src="" alt="Avatar" class="w-full h-full object-cover hidden">
+                                <span id="user-initials">U</span>
+                            </div>
+                            <span id="user-name" class="text-gray-700 font-medium hidden md:block">Usuario</span>
+                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+
+                        <!-- Dropdown Menu - POSICIONAMIENTO CORREGIDO v2.0 -->
+                        <div 
+                            id="user-dropdown"
+                            class="hidden border border-gray-100"
+                            style="position: absolute; top: 100%; right: 0; margin-top: 0.5rem; width: 16rem; background-color: white; border-radius: 0.75rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); padding: 0.5rem 0; z-index: 9999;"
+                        >
+                            <!-- Info del usuario en el dropdown -->
+                            <div class="px-4 py-3 border-b border-gray-100">
+                                <p id="dropdown-user-name" class="text-sm font-semibold text-gray-800">Nombre Usuario</p>
+                                <p id="dropdown-user-email" class="text-xs text-gray-500">email@ejemplo.com</p>
+                                <span id="dropdown-user-role" class="inline-block mt-2 px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
+                                    Cliente
+                                </span>
+                            </div>
+
+                            <!-- Opciones para ADMIN -->
+                            <div id="admin-options" style="display: none;">
+                                <a href="dashboard.html" class="flex items-center px-4 py-3 hover:bg-gray-50 transition-colors">
+                                    <svg class="w-5 h-5 mr-3 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                    </svg>
+                                    <span class="text-gray-700 text-sm font-medium">Dashboard</span>
+                                </a>
+                                <div class="border-t border-gray-100"></div>
+                            </div>
+
+                            <!-- Opciones comunes -->
+                            <a href="perfil.html" class="flex items-center px-4 py-3 hover:bg-gray-50 transition-colors">
+                                <svg class="w-5 h-5 mr-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                </svg>
+                                <span class="text-gray-700 text-sm font-medium">Datos Personales</span>
+                            </a>
+
+                            <a href="#seguridad.html" class="flex items-center px-4 py-3 hover:bg-gray-50 transition-colors">
+                                <svg class="w-5 h-5 mr-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2a5 5 0 00-5 5v2H6a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2v-8a2 2 0 00-2-2h-1V7a5 5 0 00-5-5zm-3 5a3 3 0 116 0v2H9V7z"/>
+                                </svg>
+                                <span class="text-gray-700 text-sm font-medium">Seguridad</span>
+                            </a>
+
+                            <a href="favoritos.html" class="flex items-center px-4 py-3 hover:bg-gray-50 transition-colors">
+                                <svg class="w-5 h-5 mr-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                                </svg>
+                                <span class="text-gray-700 text-sm font-medium">Favoritos</span>
+                            </a>
+
+                            <a href="mis-pedidos.html" class="flex items-center px-4 py-3 hover:bg-gray-50 transition-colors">
+                                <svg class="w-5 h-5 mr-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                                </svg>
+                                <span class="text-gray-700 text-sm font-medium">Mis Pedidos</span>
+                            </a>
+
+                            <a href="#zuri.html" class="flex items-center px-4 py-3 hover:bg-gray-50 transition-colors">
+                                <svg class="w-5 h-5 mr-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8C10 6 8 6 8 8C8 10 10 12 12 12C10 12 8 14 8 16C8 18 10 18 12 16C12 18 14 18 16 16C16 14 14 12 12 12C14 12 16 10 16 8C16 6 14 6 12 8Z M12 12C13 12 14 11 14 10C14 9 13 8 12 8C11 8 10 9 10 10C10 11 11 12 12 12Z M12 16L12 20"/>
+                                </svg>
+                                <span class="text-gray-700 text-sm font-medium">Zuri</span>
+                            </a>
+
+                            <div class="border-t border-gray-100 my-2"></div>
+
+                            <button 
+                                id="logout-button"
+                                class="w-full flex items-center px-4 py-3 hover:bg-red-50 transition-colors text-left"
+                            >
+                                <svg class="w-5 h-5 mr-3 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                                </svg>
+                                <span class="text-red-600 text-sm font-medium">Cerrar Sesión</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- BOTONES DE LOGIN/REGISTER - Solo visible si NO está logueado -->
+                    <div id="auth-buttons" class="flex items-center space-x-4">
+
+                        <!-- Iniciar Sesión -->
+                        <a href="login.html"
+                        class="px-6 py-2.5 font-medium text-green-800 border border-green-900 
+                                rounded-full bg-white/60 backdrop-blur-sm
+                                hover:bg-gray-50 hover:border-green-900
+                                transition-all duration-300 shadow-sm hover:shadow-md">
+                            Iniciar Sesión
+                        </a>
+
+                        <!-- Registrarse -->
+                        <a href="register.html"
+                        class="px-6 py-2.5 font-semibold text-white 
+                                rounded-full bg-gradient-to-r from-green-800 to-green-700
+                                hover:shadow-lg hover:scale-105
+                                transition-all duration-300">
+                            Registrarse
+                        </a> 
+                    </div>
+                </div>
+            </div>
+                <!-- Mobile Menu -->
+                <div class="md:hidden mt-4 hidden" id="mobile-menu">
+                    <div class="flex flex-col space-y-3 pb-4 bg-white rounded-lg shadow-lg p-4 border border-green-100">
+                        <a href="index.html" class="text-gray-700 hover:text-green-800 py-2 px-3 rounded-lg hover:bg-green-50 transition-all duration-200">Inicio</a>
+                        <a href="productos.html" class="text-gray-700 hover:text-green-800 py-2 px-3 rounded-lg hover:bg-green-50 transition-all duration-200">Productos</a>
+                        <a href="index.html#categorias" class="text-gray-700 hover:text-green-800 py-2 px-3 rounded-lg hover:bg-green-50 transition-all duration-200">Categorías</a>
+                </div>            
+        </nav>
+    </header>
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 py-8">
+        <!-- Page Title -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">Carrito de Compras</h1>
+            <nav class="text-sm text-gray-600">
+                <a href="index.html" class="hover:text-green-700 transition-colors duration-200">Inicio</a>
+                <span class="mx-2">></span>
+                <span class="text-gray-900">Carrito</span>
+            </nav>
+        </div>
+
+        <!-- Cart Content -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Cart Items Section -->
+            <div class="lg:col-span-2">
+                <!-- Empty Cart Message -->
+                <div id="empty-cart" class="bg-white rounded-xl shadow-lg p-8 text-center">
+                    <div class="max-w-md mx-auto">
+                        <div class="mb-6">
+                            <svg class="w-24 h-24 text-gray-300 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l-1 7H6l-1-7z"></path>
+                            </svg>
+                        </div>
+                        <h2 class="text-2xl font-semibold text-gray-900 mb-4">Tu carrito está vacío</h2>
+                        <p class="text-gray-600 mb-6">No has agregado ningún producto a tu carrito de compras</p>
+                        <div class="space-y-3">
+                            <a href="productos.html" class="bg-green-800 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200 w-full inline-block text-center">
+                                <i class="fas fa-shopping-bag mr-2"></i>Explorar Productos
+                            </a>
+                            <a href="index.html" class="bg-gray-200 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-lg transition-all duration-200 w-full inline-block text-center">
+                                Volver al Inicio
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cart Items Container -->
+                <div id="cart-items-container" class="hidden space-y-4">
+                    <!-- Cart items will be dynamically inserted here -->
+                </div>
+
+                <!-- Continue Shopping Button -->
+                <div id="continue-shopping" class="hidden mt-6">
+                    <a href="productos.html" class="inline-flex items-center text-green-800 hover:text-green-700 transition-colors duration-200">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                        </svg>
+                        Continuar Comprando
+                    </a>
+                </div>
+            </div>
+
+            <!-- Cart Summary Section -->
+            <div class="lg:col-span-1">
+                <div id="cart-summary" class="hidden bg-white rounded-xl shadow-lg p-6 sticky top-8">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-6">Resumen del Pedido</h2>
+                    
+                    <div class="space-y-4 mb-6">
+                        <div class="flex justify-between text-gray-600">
+                            <span>Subtotal (<span id="summary-items-count">0</span> productos)</span>
+                            <span id="summary-subtotal">$0</span>
+                        </div>
+                        <div class="flex justify-between text-gray-600">
+                            <span>Envío</span>
+                            <span id="summary-shipping">$0</span>
+                        </div>
+                        <div class="flex justify-between text-gray-600">
+                            <span>Impuestos</span>
+                            <span id="summary-taxes">$0</span>
+                        </div>
+                        <hr class="border-gray-200">
+                        <div class="flex justify-between text-lg font-semibold text-gray-900">
+                            <span>Total</span>
+                            <span id="summary-total">$0</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Código de descuento</label>
+                        <div class="flex">
+                            <input id="promo-code" type="text" placeholder="Ingresa tu código" class="w-full px-4 py-3 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <button id="apply-promo" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-r-lg transition-all duration-200">
+                                Aplicar
+                            </button>
+                        </div>
+                        <p id="promo-message" class="text-sm mt-2 hidden"></p>
+                    </div>
+
+                    <button id="checkout-btn" class="bg-green-800 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200 w-full mb-4">
+                        Proceder al Checkout
+                    </button>
+
+                    <div class="flex items-center justify-center text-gray-500 text-sm">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                        </svg>
+                        Compra 100% segura
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+        <footer id="contacto" class="border-t-2 border-green-800 pt-6 bg-[#fbfafa] py-10 mt-2">
+            <div class="container mx-auto px-6">
+
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+
+                    <!-- Logo y descripción -->
+                    <div class="col-span-1 md:col-span-2">
+                        <h3 class="text-3xl font-bold mb-4 text-green-800">Grow House</h3>
+
+                        <p class="text-gray-900 mb-6 leading-relaxed">
+                            Tu destino para productos de cultivo indoor de alta calidad. Cultiva tu pasión con tecnología y naturaleza.
+                        </p>
+
+                        <!-- Redes sociales -->
+                        <div class="flex space-x-4 mt-5">
+
+                            <!-- FB -->
+                            <a href="#" 
+                                class="w-14 h-14 flex items-center justify-center rounded-full 
+                                bg-gradient-to-br from-blue-500 to-blue-700 
+                                shadow-lg shadow-blue-900/30
+                                hover:scale-125 hover:shadow-blue-600/50
+                                transition-all duration-300">
+                                <i class="fab fa-facebook-f text-2xl text-white"></i>
+                            </a>
+
+                            <!-- IG -->
+                            <a href="#" 
+                                class="w-14 h-14 flex items-center justify-center rounded-full 
+                                bg-gradient-to-br from-pink-500 via-purple-500 to-yellow-500
+                                shadow-lg shadow-purple-900/30
+                                hover:scale-125 hover:shadow-pink-600/50
+                                transition-all duration-300">
+                                <i class="fab fa-instagram text-2xl text-white"></i>
+                            </a>
+
+                            <!-- WhatsApp -->
+                            <a href="#" 
+                                class="w-14 h-14 flex items-center justify-center rounded-full 
+                                bg-gradient-to-br from-green-400 to-green-600 
+                                shadow-lg shadow-green-900/30
+                                hover:scale-125 hover:shadow-green-500/50
+                                transition-all duration-300">
+                                <i class="fab fa-whatsapp text-2xl text-white"></i>
+                            </a>
+
+                        </div>
+                    </div>
+
+                    <!-- Enlaces rápidos -->
+                    <div>
+                        <h4 class="text-lg font-semibold mb-6 text-green-800">Enlaces Rápidos</h4>
+                        <ul class="space-y-2">
+                            <li><a href="productos.html" class="text-gray-900 hover:text-green-700 transition">Productos</a></li>
+                            <li><a href="index.html#categorias" class="text-gray-900 hover:text-green-700 transition">Categorías</a></li>
+                            <li><a href="carrito.html" class="text-gray-900 hover:text-green-700 transition">Carrito</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Contacto -->
+                    <div>
+                        <h4 class="text-lg font-semibold mb-6 text-green-800">Contacto</h4>
+                        <ul class="space-y-2 text-gray-900">
+                            <li>📧 info@growhouse.com</li>
+                            <li>📱 +57 301 234 5678</li>
+                            <li>📍 Pital-Huila, Colombia</li>
+                            <li>🕒 Lun - Sáb: 9AM - 9PM</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Línea final -->
+                <div class="border-t border-green-800 pt-2 text-center">
+                    <p class="text-gray-900">
+                        © 2024 Grow House. Todos los derechos reservados |
+                        <a href="#" class="hover:text-white transition">Política de Privacidad</a> |
+                        <a href="#" class="hover:text-white transition">Términos de Servicio</a>
+                    </p>
+                </div>
+            </div>
+        </footer>
+<!-- Auth API - PRIMERO -->
+<script src="../scripts/auth-api.js"></script>
+
+<!-- Profile Image Manager - ANTES del Navbar Avatar -->
+<script src="../scripts/profile-image.js"></script>
+
+<!-- Navbar Avatar Manager -->
+<script src="../scripts/navbar-avatar.js"></script>
+
+<!-- UI Manager - SEGUNDO (NUEVO) -->
+<script src="../scripts/ui-manager.js"></script>
+
+<!-- Session Manager - TERCERO -->
+<script src="../scripts/session.js"></script>
+
+<!-- Novedades y Notificaciones - CUARTO -->
+<script src="../scripts/novedades-notificaciones.js"></script>
+
+<!-- Carrito y otros scripts - DESPUÉS -->
+<script src="../scripts/carrito.js"></script>
+<script src="../scripts/main.js"></script>
+</body>
+</html>

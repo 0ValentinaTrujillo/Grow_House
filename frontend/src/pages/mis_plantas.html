@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mis Plantas — Zuri</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --verde:       #207719;
+      --verde-claro: #46d560;
+      --verde-l:     #207719;
+      --verde-ñ:     #3ab325ee;
+      --gris-texto:  #6b7280;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #ffffff;
+      min-height: 100vh;
+      padding: 20px 20px 110px;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      text-align: center;
+      margin-bottom: 28px;
+      padding-top: 8px;
+    }
+
+    .header h1 {
+      color: black;
+      font-size: 2.2rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 6px;
+    }
+
+    .header p {
+      color: var(--gris-texto);
+      font-size: 1rem;
+    }
+
+    /* ── CARD ── */
+    .card {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(148, 148, 155, 0.473);
+      border: 2px solid var(--borde-verde);
+      padding: 28px;
+      margin-bottom: 20px;
+    }
+
+    .card-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: black;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .contador {
+      font-size: 0.84rem;
+      color: var(--gris-texto);
+      margin-bottom: 18px;
+    }
+
+    /* ── PLANTA CARD ── */
+    .planta-card {
+      background: linear-gradient(135deg, #f0fdf4, #d1fae5);
+      border: 2px solid var(--borde-verde);
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 14px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+    }
+
+    .planta-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 40px -8px rgba(100, 221, 96, 0.5);
+    }
+
+    .planta-thumb {
+      width: 76px; height: 76px;
+      border-radius: 14px;
+      background: white;
+      border: 2px solid var(--borde-verde);
+      flex-shrink: 0;
+      overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.2rem;
+    }
+
+    .planta-thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+    .planta-info { flex: 1; overflow: hidden; }
+
+    .planta-nombre {
+      font-weight: 700;
+      font-size: 1rem;
+      color: #1a1a1a;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 3px;
+    }
+
+    .planta-cientifico {
+      font-style: italic;
+      color: #1a1a1a;
+      font-size: 0.78rem;
+      margin-bottom: 6px;
+    }
+
+    .planta-desc {
+      color: var(--gris-texto);
+      font-size: 0.78rem;
+      line-height: 1.45;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .badge-dificultad {
+      position: absolute;
+      top: 12px; right: 12px;
+      background: #1a1a1a;
+      color: white;
+      padding: 4px 13px;
+      border-radius: 20px;
+      font-size: 0.68rem;
+      font-weight: 700;
+    }
+
+    .btn-borrar {
+      position: absolute;
+      bottom: 10px; right: 12px;
+      background: none;
+      border: none;
+      color: #ccc;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: color .2s;
+      padding: 4px;
+    }
+
+    .btn-borrar:hover { color: #e44; }
+
+    /* ── VACÍO ── */
+    .empty-state {
+      text-align: center;
+      padding: 50px 20px;
+      border: 2px dashed #d1d5db;
+      border-radius: 12px;
+      color: var(--gris-texto);
+    }
+
+    .empty-state .icono { font-size: 4rem; margin-bottom: 14px; }
+    .empty-state p { font-size: 0.95rem; line-height: 1.7; }
+
+    /* ── FOOTER TIP ── */
+    .footer {
+      text-align: center;
+      color: rgb(48, 48, 48);
+      padding: 18px 20px;
+      background: linear-gradient(135deg, var(--verde-l), var(--verde-ñ));
+      border: 2px solid var(--borde-verde);
+      border-radius: 14px;
+      font-size: 0.88rem;
+    }
+
+    /* ── FAB ── */
+    .fab {
+      position: fixed;
+      bottom: 28px; right: 24px;
+      width: 62px; height: 62px;
+      background: linear-gradient(135deg, var(--verde), var(--verde-claro));
+      border-radius: 50%;
+      border: none;
+      color: white;
+      font-size: 2rem;
+      cursor: pointer;
+      box-shadow: 0 10px 25px rgba(148, 148, 155, 0.473);
+      display: flex; align-items: center; justify-content: center;
+      text-decoration: none;
+      transition: transform .3s, box-shadow .3s;
+      z-index: 99;
+    }
+
+    .fab:hover {
+      transform: scale(1.12) rotate(90deg);
+      box-shadow: 0 15px 35px rgba(148, 148, 155, 0.473);
+    }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed;
+      bottom: 108px; left: 50%;
+      transform: translateX(-50%) translateY(16px);
+      background: var(--verde);
+      color: white;
+      padding: 12px 26px;
+      border-radius: 30px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      opacity: 0;
+      transition: all .38s;
+      z-index: 999;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    .spinner {
+      width: 40px; height: 40px;
+      border: 4px solid #e5e7eb;
+      border-top-color: #207719;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 12px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>Mis Plantas</h1>
+    <p>Tu jardín digital personal Zuri</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Plantas registradas</div>
+    <div id="lista"></div>
+  </div>
+
+  <div class="footer"> <strong>Tip:</strong> Toca el <strong>+</strong> para registrar una nueva planta con IA
+  </div>
+
+  <a href="registro_plantas.html" class="fab" title="Agregar planta">＋</a>
+  <div class="toast" id="toast"></div>
+
+<script>
+  const CLAVE = 'zuri_plantas_v1';
+
+  function cargarPlantas() {
+    try { return JSON.parse(localStorage.getItem(CLAVE)) || []; } catch { return []; }
+  }
+
+  function guardarPlantas(arr) {
+    localStorage.setItem(CLAVE, JSON.stringify(arr));
+  }
+
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2400);
+  }
+
+  function borrar(id, e) {
+    e.stopPropagation();
+    let plantas = cargarPlantas();
+    const nombre = plantas.find(p => p.id === id)?.nombre_comun || 'Planta';
+    plantas = plantas.filter(p => p.id !== id);
+    guardarPlantas(plantas);
+    toast(`🗑 ${nombre} eliminada`);
+    render();
+  }
+
+  function render() {
+    const plantas  = cargarPlantas();
+    const lista    = document.getElementById('lista');
+    const contador = document.getElementById('contador');
+
+
+    if (plantas.length === 0) {
+      lista.innerHTML = `
+        <div class="empty-state">
+          <div class="spinner"></div>
+          <p>Aún no tienes plantas registradas.</p>
+        </div>`;
+      return;
+    }
+
+    lista.innerHTML = plantas.map(p => `
+      <div class="planta-card" onclick="location.href='agregar-planta.html?ver=${p.id}'">
+        <div class="planta-thumb">
+          ${p.imagen ? `<img src="${p.imagen}" alt="${p.nombre_comun}">` : '🪴'}
+        </div>
+        <div class="planta-info">
+          <div class="planta-nombre">${p.nombre_comun}</div>
+          <div class="planta-cientifico">${p.nombre_cientifico}</div>
+          <div class="planta-desc">${p.descripcion}</div>
+        </div>
+        <span class="badge-dificultad">${p.nivel_dificultad}</span>
+        <button class="btn-borrar" onclick="borrar(${p.id}, event)" title="Eliminar">🗑</button>
+      </div>
+    `).join('');
+  }
+
+  const params = new URLSearchParams(location.search);
+  if (params.get('guardada')) {
+    history.replaceState({}, '', location.pathname);
+    toast('✅ Planta guardada correctamente');
+  }
+
+  render();
+</script>
+</body>
+</html>
