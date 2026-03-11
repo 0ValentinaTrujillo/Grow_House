@@ -419,6 +419,29 @@
         </div>
     </div>
 
+    <!-- OVERLAY DE AUTENTICACIÓN -->
+    <div id="auth-overlay" style="display:none; position:fixed; inset:0; z-index:9999;
+        background:rgba(255,255,255,0.97); flex-direction:column; align-items:center;
+        justify-content:center; text-align:center; padding:30px; border-radius:20px;">
+        <div style="font-size:3rem; margin-bottom:15px;">🪴</div>
+        <h2 style="color:#207719; font-size:1.3rem; margin-bottom:12px;">
+            ¡Regístrate para chatear con Zuri!
+        </h2>
+        <p style="color:#6b7280; font-size:0.9rem; margin-bottom:25px; line-height:1.5;">
+            Para usar el asistente de plantas necesitas<br>una cuenta en Grow House.
+        </p>
+        <a href="/frontend/src/pages/register.html" style="display:block; background:linear-gradient(135deg,#207719,#46d560);
+        color:white; padding:14px 30px; border-radius:25px; text-decoration:none;
+        font-weight:600; margin-bottom:12px;">
+            Crear cuenta gratis
+        </a>
+        <a href="/frontend/src/pages/login.html" style="display:block; color:#207719; padding:12px 30px;
+        border-radius:25px; text-decoration:none; font-weight:600;
+        border:2px solid #207719;">
+            Ya tengo cuenta
+        </a>
+    </div>
+
     <!-- Script del cliente chatbot -->
     <script src="../scripts/chatbot.js"></script>
     
@@ -541,9 +564,18 @@
 
         // Focus automático en el input al cargar
         window.addEventListener('load', () => {
+            const token = localStorage.getItem('growhouse-auth-token');
+
+            if (!token) {
+                document.getElementById('auth-overlay').style.display = 'flex';
+                userInput.disabled = true;
+                sendBtn.disabled = true;
+            } else {
+                userInput.focus();
+            }
+
             console.log('✅ Página del chatbot cargada');
             console.log('Base URL:', chatbotClient.baseURL);
-            userInput.focus();
         });
     </script>
 </body>

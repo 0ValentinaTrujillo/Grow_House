@@ -667,6 +667,15 @@
                                 Verificar y crear cuenta
                             </button>
 
+                            if (result.success) {
+                                // Guardar sesión
+                                localStorage.setItem('growhouse_token', result.token);
+                                localStorage.setItem('growhouse_user', JSON.stringify(result.user));
+
+                                showAuthNotification('¡Cuenta creada exitosamente! Bienvenido 🌱', 'success');
+                                setTimeout(() => { window.location.href = 'recomendaciones.html'; }, 1500);
+                            }
+
                             <button 
                                 onclick="resendCode('${userData.email}', '${userData.firstName}', '${userData.lastName}')"
                                 class="w-full text-green-700 text-sm font-medium hover:underline">

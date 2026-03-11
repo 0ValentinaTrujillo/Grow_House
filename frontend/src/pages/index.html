@@ -562,7 +562,7 @@
     </section>
 
     <!-- Sección Productos Recomendados Para Ti -->
-    <section id="productosrecomendadosparati" class="py-16 bg-white">
+    <section id="productosrecomendadosparati" class="py-16 bg-white" style="display:none;">
     <div class="container mx-auto px-6">
 
         <!-- Encabezado igual al de Productos Destacados -->
@@ -825,302 +825,382 @@
         });
     </script>
 
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    cargarCategoria();
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        cargarCategoria();
 
-    const input = document.getElementById('search-input');
+        const input = document.getElementById('search-input');
 
-    input.addEventListener('input', () => {
-        clearTimeout(searchTimeout);
-        searchQuery = input.value;
-        searchTimeout = setTimeout(() => buscarConValidacion(), 400);
-    });
-
-    input.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
+        input.addEventListener('input', () => {
             clearTimeout(searchTimeout);
             searchQuery = input.value;
-            buscarConValidacion();
+            searchTimeout = setTimeout(() => buscarConValidacion(), 400);
+        });
+
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                clearTimeout(searchTimeout);
+                searchQuery = input.value;
+                buscarConValidacion();
+            }
+        });
+    });
+    </script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const container = document.getElementById('user-menu-container');
+        let hideTimeout = null;
+
+        function hideAllSubmenus() {
+            document.querySelectorAll('.floating-submenu').forEach(s => s.classList.remove('visible'));
+            document.querySelectorAll('.has-submenu').forEach(r => r.classList.remove('active'));
         }
-    });
-});
-</script>
 
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const container = document.getElementById('user-menu-container');
-    let hideTimeout = null;
-
-    function hideAllSubmenus() {
-        document.querySelectorAll('.floating-submenu').forEach(s => s.classList.remove('visible'));
-        document.querySelectorAll('.has-submenu').forEach(r => r.classList.remove('active'));
-    }
-
-    function positionAndShow(triggerEl, submenuId) {
-        clearTimeout(hideTimeout);
-        hideAllSubmenus();
-        const submenu = document.getElementById(submenuId);
-        if (!submenu) return;
-
-        submenu.classList.add('visible');
-        triggerEl.classList.add('active');
-
-        const rect = triggerEl.getBoundingClientRect();
-        const smW  = submenu.offsetWidth;
-        const smH  = submenu.offsetHeight;
-        const winH = window.innerHeight;
-
-        let left = rect.left - smW - 6;
-        if (left < 6) left = rect.right + 6;
-
-        let top = rect.top;
-        if (top + smH > winH - 8) top = winH - smH - 8;
-        if (top < 8) top = 8;
-
-        submenu.style.left = left + 'px';
-        submenu.style.top  = top  + 'px';
-    }
-
-    document.querySelectorAll('.has-submenu').forEach(trigger => {
-        const submenuId = trigger.dataset.submenu;
-        const submenu   = document.getElementById(submenuId);
-
-        trigger.addEventListener('mouseenter', () => positionAndShow(trigger, submenuId));
-        trigger.addEventListener('mouseleave', () => {
-            hideTimeout = setTimeout(() => {
-                if (submenu && !submenu.matches(':hover')) hideAllSubmenus();
-            }, 100);
-        });
-    });
-
-    document.querySelectorAll('.floating-submenu').forEach(submenu => {
-        submenu.addEventListener('mouseenter', () => clearTimeout(hideTimeout));
-        submenu.addEventListener('mouseleave', () => {
-            hideTimeout = setTimeout(hideAllSubmenus, 100);
-        });
-    });
-
-    document.addEventListener('click', (e) => {
-        if (container && !container.contains(e.target) && !e.target.closest('.floating-submenu')) {
+        function positionAndShow(triggerEl, submenuId) {
+            clearTimeout(hideTimeout);
             hideAllSubmenus();
+            const submenu = document.getElementById(submenuId);
+            if (!submenu) return;
+
+            submenu.classList.add('visible');
+            triggerEl.classList.add('active');
+
+            const rect = triggerEl.getBoundingClientRect();
+            const smW  = submenu.offsetWidth;
+            const smH  = submenu.offsetHeight;
+            const winH = window.innerHeight;
+
+            let left = rect.left - smW - 6;
+            if (left < 6) left = rect.right + 6;
+
+            let top = rect.top;
+            if (top + smH > winH - 8) top = winH - smH - 8;
+            if (top < 8) top = 8;
+
+            submenu.style.left = left + 'px';
+            submenu.style.top  = top  + 'px';
         }
+
+        document.querySelectorAll('.has-submenu').forEach(trigger => {
+            const submenuId = trigger.dataset.submenu;
+            const submenu   = document.getElementById(submenuId);
+
+            trigger.addEventListener('mouseenter', () => positionAndShow(trigger, submenuId));
+            trigger.addEventListener('mouseleave', () => {
+                hideTimeout = setTimeout(() => {
+                    if (submenu && !submenu.matches(':hover')) hideAllSubmenus();
+                }, 100);
+            });
+        });
+
+        document.querySelectorAll('.floating-submenu').forEach(submenu => {
+            submenu.addEventListener('mouseenter', () => clearTimeout(hideTimeout));
+            submenu.addEventListener('mouseleave', () => {
+                hideTimeout = setTimeout(hideAllSubmenus, 100);
+            });
+        });
+
+        document.addEventListener('click', (e) => {
+            if (container && !container.contains(e.target) && !e.target.closest('.floating-submenu')) {
+                hideAllSubmenus();
+            }
+        });
     });
-});
-</script>
+    </script>
 
-<script>
-async function cargarProductosDestacados() {
-    const grid = document.getElementById('featured-grid');
+    <script>
+    async function cargarProductosDestacados() {
+        const grid = document.getElementById('featured-grid');
 
-    try {
-        const response = await fetch('http://localhost:5000/api/products?featured=true&status=active&limit=4');
-        
-        if (!response.ok) throw new Error(`Error del servidor: ${response.status}`);
-        
-        const json = await response.json();
-        const productos = json.data || [];
+        try {
+            const response = await fetch('http://localhost:5000/api/products?featured=true&status=active&limit=4');
+            
+            if (!response.ok) throw new Error(`Error del servidor: ${response.status}`);
+            
+            const json = await response.json();
+            const productos = json.data || [];
 
-        if (!productos.length) {
+            if (!productos.length) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-16">
+                        <p class="text-gray-500 text-lg">No hay productos destacados por el momento.</p>
+                    </div>`;
+                return;
+            }
+
+            grid.innerHTML = '';
+            productos.forEach(producto => {
+                const card = createProductCard(producto);
+                grid.appendChild(card);
+            });
+
+        } catch (error) {
+            console.error('❌ Error cargando destacados:', error);
             grid.innerHTML = `
                 <div class="col-span-full text-center py-16">
-                    <p class="text-gray-500 text-lg">No hay productos destacados por el momento.</p>
+                    <p class="text-gray-400 text-lg">Error al cargar productos destacados.</p>
+                    <button onclick="cargarProductosDestacados()" 
+                        class="mt-4 bg-green-700 hover:bg-green-800 text-white font-semibold py-2 px-6 rounded-lg">
+                        Reintentar
+                    </button>
                 </div>`;
-            return;
         }
-
-        grid.innerHTML = '';
-        productos.forEach(producto => {
-            const card = createProductCard(producto);
-            grid.appendChild(card);
-        });
-
-    } catch (error) {
-        console.error('❌ Error cargando destacados:', error);
-        grid.innerHTML = `
-            <div class="col-span-full text-center py-16">
-                <p class="text-gray-400 text-lg">Error al cargar productos destacados.</p>
-                <button onclick="cargarProductosDestacados()" 
-                    class="mt-4 bg-green-700 hover:bg-green-800 text-white font-semibold py-2 px-6 rounded-lg">
-                    Reintentar
-                </button>
-            </div>`;
     }
-}
-document.addEventListener('DOMContentLoaded', cargarProductosDestacados);
-</script>
-<!-- RECOMENDACIONES PARA TI -->
-<script>
+    document.addEventListener('DOMContentLoaded', cargarProductosDestacados);
+    </script>
+    <!-- RECOMENDACIONES PARA TI -->
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+        console.log('🌿 Script recomendaciones iniciado');
+        console.log('🔑 Token:', getToken() ? 'existe' : 'NO existe');
+
+        if (!getToken()) { 
+            console.log('⚠️ Sin token → mostrando invitación');
+            mostrarInvitacion(); 
+            return; 
+        }
+        // ... resto del código
+    (function () {
+    const API = 'http://localhost:5000';
+
+    function getToken() {
+    return localStorage.getItem('growhouse-auth-token') || null;
+    }
+
+    function authHeaders() {
+        const h = { 'Content-Type': 'application/json' };
+        if (getToken()) h['Authorization'] = `Bearer ${getToken()}`;
+        return h;
+    }
+
     document.addEventListener('DOMContentLoaded', async () => {
     console.log('🌿 Script recomendaciones iniciado');
-    console.log('🔑 Token:', getToken() ? 'existe' : 'NO existe');
 
-    if (!getToken()) { 
-        console.log('⚠️ Sin token → mostrando invitación');
-        mostrarInvitacion(); 
-        return; 
+    const seccion = document.getElementById('productosrecomendadosparati');
+
+    function getToken() {
+        return localStorage.getItem('growhouse-auth-token') || null;
     }
-    // ... resto del código
-(function () {
-  const API = 'http://localhost:5000';
 
-  function getToken() {
-    return localStorage.getItem('token') || null;
-  }
+    function authHeaders() {
+        const h = { 'Content-Type': 'application/json' };
+        if (getToken()) h['Authorization'] = `Bearer ${getToken()}`;
+        return h;
+    }
 
-  function authHeaders() {
-    const h = { 'Content-Type': 'application/json' };
-    if (getToken()) h['Authorization'] = `Bearer ${getToken()}`;
-    return h;
-  }
+    // Sin sesión → ocultar sección completa
+    if (!getToken()) {
+        if (seccion) seccion.style.display = 'none';
+        return;
+    }
 
-  document.addEventListener('DOMContentLoaded', async () => {
+    // Con sesión → mostrar sección
+    if (seccion) seccion.style.display = 'block';
 
-    if (!getToken()) { mostrarInvitacion(); return; }
-
+    // ¿Vienen plantas guardadas de la encuesta recién hecha?
     const guardado = sessionStorage.getItem('plantaRecomendaciones');
     if (guardado) {
-      try {
-        const { plantas, filtros } = JSON.parse(guardado);
-        sessionStorage.removeItem('plantaRecomendaciones');
-        renderGrid(plantas, filtros);
-        return;
-      } catch { sessionStorage.removeItem('plantaRecomendaciones'); }
+        try {
+            const { plantas, filtros } = JSON.parse(guardado);
+            sessionStorage.removeItem('plantaRecomendaciones');
+            renderGrid(plantas);
+            return;
+        } catch {
+            sessionStorage.removeItem('plantaRecomendaciones');
+        }
     }
 
     mostrarSpinner();
+
     try {
-      const estadoRes = await fetch(`${API}/api/recomendaciones/estado`, { headers: authHeaders() });
-      if (!estadoRes.ok) { mostrarInvitacion(); return; }
+        const estadoRes = await fetch('http://localhost:5000/api/recomendaciones/estado', {
+            headers: authHeaders()
+        });
 
-      const estado = await estadoRes.json();
-      if (!estado.completada) { mostrarInvitacion(); return; }
+        if (!estadoRes.ok) { mostrarInvitacion(); return; }
 
-      const recomRes = await fetch(`${API}/api/recomendaciones`, {
-        method: 'POST',
-        headers: authHeaders(),
-        body: JSON.stringify(estado.preferencias),
-      });
-      if (!recomRes.ok) { mostrarInvitacion(); return; }
+        const estado = await estadoRes.json();
 
-      const data = await recomRes.json();
-      renderGrid(data.recomendaciones, data.preferencias);
+        if (!estado.completada) { mostrarInvitacion(); return; }
+
+        const recomRes = await fetch('http://localhost:5000/api/recomendaciones', {
+            method: 'POST',
+            headers: authHeaders(),
+            body: JSON.stringify(estado.preferencias),
+        });
+
+        if (!recomRes.ok) { mostrarInvitacion(); return; }
+
+        const data = await recomRes.json();
+        renderGrid(data.recomendaciones);
 
     } catch (e) {
-      console.error('Error recomendaciones:', e);
-      mostrarInvitacion();
-    }
-  });
-
-  function mostrarInvitacion() {
-    setGrid(`
-      <div id="recom-estado-inicial" class="col-span-full flex flex-col items-center justify-center py-16 gap-4" style="font-family: 'Poppins', sans-serif;">
-            <p class="text-gray-500 text-lg text-center">
-            Aún no has completado la encuesta.<br>
-            ¡Descubre qué planta es perfecta para ti!
-            </p>
-            <a href="recomendaciones.html"
-            class="mt-2 inline-flex items-center gap-2 bg-green-700 hover:bg-green-800 text-white font-normal
-                    px-6 py-3 rounded-xl transition-all duration-300 hover:-translate-y-1
-                    hover:shadow-lg hover:shadow-white text-sm">
-            Hacer la encuesta
-            </a>
-        </div>`);
-  }
-
-  function mostrarSpinner() {
-    setGrid(`
-      <div class="col-span-full flex flex-col items-center justify-center py-16">
-        <div class="animate-spin rounded-full h-16 w-16 border-b-4 border-green-800 mb-4"></div>
-        <p class="text-gray-600 text-lg">Cargando tus plantas ideales…</p>
-      </div>`);
-  }
-
-  function renderGrid(plantas, filtros) {
-    console.log('✅ createProductCard:', typeof createProductCard);
-    console.log('✅ plantas:', plantas?.length);
-
-    if (!plantas?.length) {
-      setGrid(`
-        <div class="col-span-full flex flex-col items-center justify-center py-16 gap-4">
-          <p class="text-gray-500 text-lg text-center">No encontramos plantas con esos filtros.</p>
-        </div>`);
-      return;
+        console.error('Error recomendaciones:', e);
+        mostrarInvitacion();
     }
 
-    const grid = document.getElementById('recom-grid');
-    if (!grid) { console.error('❌ No existe #recom-grid en el HTML'); return; }
-    grid.innerHTML = '';
+    function mostrarInvitacion() {
+        setGrid(`
+            <div class="col-span-full flex flex-col items-center justify-center py-16 gap-4" style="font-family:'Poppins',sans-serif;">
+                <p class="text-gray-500 text-lg text-center">
+                    Aún no has completado la encuesta.<br>
+                    ¡Descubre qué planta es perfecta para ti!
+                </p>
+                <a href="recomendaciones.html"
+                    class="mt-2 inline-flex items-center gap-2 bg-green-700 hover:bg-green-800 text-white font-normal
+                            px-6 py-3 rounded-xl transition-all duration-300 hover:-translate-y-1
+                            hover:shadow-lg text-sm">
+                    Hacer la encuesta
+                </a>
+            </div>`);
+    }
 
-    plantas.forEach((planta, i) => {
-      if (typeof createProductCard !== 'function') {
-        console.error('❌ createProductCard no está definida');
-        return;
-      }
-      const card = createProductCard(planta);
-      card.style.opacity   = '0';
-      card.style.transform = 'translateY(18px)';
-      card.style.transition = `opacity 0.4s ease ${i * 0.08}s, transform 0.4s ease ${i * 0.08}s`;
-      grid.appendChild(card);
-      requestAnimationFrame(() => requestAnimationFrame(() => {
-        card.style.opacity   = '1';
-        card.style.transform = 'translateY(0)';
-      }));
-    });
-  }
+    function mostrarSpinner() {
+        setGrid(`
+            <div class="col-span-full flex flex-col items-center justify-center py-16">
+                <div class="animate-spin rounded-full h-16 w-16 border-b-4 border-green-800 mb-4"></div>
+                <p class="text-gray-600 text-lg">Cargando tus plantas ideales…</p>
+            </div>`);
+    }
 
-  function setGrid(html) {
-    const el = document.getElementById('recom-grid');
-    if (el) el.innerHTML = html;
-  }
-})();
-</script>
-<script>
-    // Cerrar chat al hacer clic fuera
-        document.addEventListener('click', function(e) {
-            const chatPanel = document.getElementById('emergency-screen');
-            const chatBtn = document.getElementById('chat-toggle');
-
-            if (
-                chatPanel.classList.contains('active') &&
-                !chatPanel.contains(e.target) &&
-                !chatBtn.contains(e.target)
-            ) {
-                chatPanel.classList.remove('active');
-                chatBtn.classList.remove('blur');
-                chatBtn.style.bottom = '';   // ✅ Resetea la posición al original del CSS
-                chatBtn.style.right = '';    // ✅ Por si acaso también resetea right
-            }
+    function renderGrid(plantas) {
+        if (!plantas?.length) {
+            mostrarInvitacion();
+            return;
+        }
+        const grid = document.getElementById('recom-grid');
+        if (!grid) return;
+        grid.innerHTML = '';
+        plantas.forEach((planta, i) => {
+            if (typeof createProductCard !== 'function') return;
+            const card = createProductCard(planta);
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(18px)';
+            card.style.transition = `opacity 0.4s ease ${i * 0.08}s, transform 0.4s ease ${i * 0.08}s`;
+            grid.appendChild(card);
+            requestAnimationFrame(() => requestAnimationFrame(() => {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }));
         });
-        // Ajustar posición del botón en móvil cuando el chat está abierto
-        function ajustarBotonMobile() {
-            const chatBtn = document.getElementById('chat-toggle');
-            const isMobile = window.innerWidth < 640;
-            
-            if (isMobile && document.getElementById('emergency-screen').classList.contains('active')) {
-                chatBtn.style.bottom = 'calc(85vh + 10px)';
-            } else {
-                chatBtn.style.bottom = '';
-            }
+    }
+
+    function setGrid(html) {
+        const el = document.getElementById('recom-grid');
+        if (el) el.innerHTML = html;
+    }
+});
+
+    function mostrarInvitacion() {
+        setGrid(`
+        <div id="recom-estado-inicial" class="col-span-full flex flex-col items-center justify-center py-16 gap-4" style="font-family: 'Poppins', sans-serif;">
+                <p class="text-gray-500 text-lg text-center">
+                Aún no has completado la encuesta.<br>
+                ¡Descubre qué planta es perfecta para ti!
+                </p>
+                <a href="recomendaciones.html"
+                class="mt-2 inline-flex items-center gap-2 bg-green-700 hover:bg-green-800 text-white font-normal
+                        px-6 py-3 rounded-xl transition-all duration-300 hover:-translate-y-1
+                        hover:shadow-lg hover:shadow-white text-sm">
+                Hacer la encuesta
+                </a>
+            </div>`);
+    }
+
+    function mostrarSpinner() {
+        setGrid(`
+        <div class="col-span-full flex flex-col items-center justify-center py-16">
+            <div class="animate-spin rounded-full h-16 w-16 border-b-4 border-green-800 mb-4"></div>
+            <p class="text-gray-600 text-lg">Cargando tus plantas ideales…</p>
+        </div>`);
+    }
+
+    function renderGrid(plantas, filtros) {
+        console.log('✅ createProductCard:', typeof createProductCard);
+        console.log('✅ plantas:', plantas?.length);
+
+        if (!plantas?.length) {
+        setGrid(`
+            <div class="col-span-full flex flex-col items-center justify-center py-16 gap-4">
+            <p class="text-gray-500 text-lg text-center">No encontramos plantas con esos filtros.</p>
+            </div>`);
+        return;
         }
 
-        document.getElementById('chat-toggle').addEventListener('click', function() {
-            setTimeout(ajustarBotonMobile, 50);
+        const grid = document.getElementById('recom-grid');
+        if (!grid) { console.error('❌ No existe #recom-grid en el HTML'); return; }
+        grid.innerHTML = '';
+
+        plantas.forEach((planta, i) => {
+        if (typeof createProductCard !== 'function') {
+            console.error('❌ createProductCard no está definida');
+            return;
+        }
+        const card = createProductCard(planta);
+        card.style.opacity   = '0';
+        card.style.transform = 'translateY(18px)';
+        card.style.transition = `opacity 0.4s ease ${i * 0.08}s, transform 0.4s ease ${i * 0.08}s`;
+        grid.appendChild(card);
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+            card.style.opacity   = '1';
+            card.style.transform = 'translateY(0)';
+        }));
         });
+    }
 
-        document.addEventListener('click', function(e) {
-            const chatPanel = document.getElementById('emergency-screen');
-            const chatBtn = document.getElementById('chat-toggle');
+    function setGrid(html) {
+        const el = document.getElementById('recom-grid');
+        if (el) el.innerHTML = html;
+    }
+    })();
+    </script>
+    <script>
+        // Cerrar chat al hacer clic fuera
+            document.addEventListener('click', function(e) {
+                const chatPanel = document.getElementById('emergency-screen');
+                const chatBtn = document.getElementById('chat-toggle');
 
-            if (
-                chatPanel.classList.contains('active') &&
-                !chatPanel.contains(e.target) &&
-                !chatBtn.contains(e.target)
-            ) {
-                chatPanel.classList.remove('active');
-                chatBtn.classList.remove('blur');
+                if (
+                    chatPanel.classList.contains('active') &&
+                    !chatPanel.contains(e.target) &&
+                    !chatBtn.contains(e.target)
+                ) {
+                    chatPanel.classList.remove('active');
+                    chatBtn.classList.remove('blur');
+                    chatBtn.style.bottom = '';   // ✅ Resetea la posición al original del CSS
+                    chatBtn.style.right = '';    // ✅ Por si acaso también resetea right
+                }
+            });
+            // Ajustar posición del botón en móvil cuando el chat está abierto
+            function ajustarBotonMobile() {
+                const chatBtn = document.getElementById('chat-toggle');
+                const isMobile = window.innerWidth < 640;
+                
+                if (isMobile && document.getElementById('emergency-screen').classList.contains('active')) {
+                    chatBtn.style.bottom = 'calc(85vh + 10px)';
+                } else {
+                    chatBtn.style.bottom = '';
+                }
             }
-        });
+
+            document.getElementById('chat-toggle').addEventListener('click', function() {
+                setTimeout(ajustarBotonMobile, 50);
+            });
+
+            document.addEventListener('click', function(e) {
+                const chatPanel = document.getElementById('emergency-screen');
+                const chatBtn = document.getElementById('chat-toggle');
+
+                if (
+                    chatPanel.classList.contains('active') &&
+                    !chatPanel.contains(e.target) &&
+                    !chatBtn.contains(e.target)
+                ) {
+                    chatPanel.classList.remove('active');
+                    chatBtn.classList.remove('blur');
+                }
+            });
 </script>
 </body>
 

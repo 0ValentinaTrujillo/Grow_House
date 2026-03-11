@@ -83,7 +83,11 @@ class ChatbotClient {
                 const response = await fetch(`${this.baseURL}/chat`, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        // Enviar token si existe
+                        ...(localStorage.getItem('token') && {
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        })
                     },
                     body: JSON.stringify({
                         message: trimmedMessage
