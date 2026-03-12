@@ -376,12 +376,7 @@
   const preferencias = { ubicacion: "", tipo: "", presupuesto: 0, preferencia: "" };
 
   function getToken() {
-    return localStorage.getItem('token') || getCookie('token') || null;
-  }
-
-  function getCookie(name) {
-    const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
-    return match ? match[2] : null;
+    return localStorage.getItem('growhouse-auth-token') || null;
   }
 
   function authHeaders() {
@@ -390,27 +385,33 @@
     return h;
   }
 
-  // ── Al cargar: verificar si ya hizo la encuesta ──────────────────────
+  // ── Verificar acceso al cargar ──
   document.addEventListener('DOMContentLoaded', async () => {
-    if (!getToken()) return; // invitado: mostrar encuesta normal
+    const token = getToken();
+
+    // Sin sesión → login
+    if (!token) { window.location.href = 'login.html'; return; }
 
     try {
       const res = await fetch('http://localhost:5000/api/recomendaciones/estado', {
         headers: authHeaders(),
       });
-      if (!res.ok) return;
+
+      if (!res.ok) return; // error de red → mostrar encuesta
 
       const estado = await res.json();
 
+      // Ya completó → bloquear y mostrar mensaje
       if (estado.completada) {
         mostrarYaCompletada(estado.fechaRespuesta);
       }
+      // No completó → mostrar encuesta normalmente
+
     } catch (e) {
       console.warn('No se pudo verificar estado:', e);
     }
   });
 
-  // ── Bloquear formulario si ya completó ──────────────────────────────
   function mostrarYaCompletada(fecha) {
     const fechaStr = fecha
       ? new Date(fecha).toLocaleDateString('es-CO', {
@@ -420,7 +421,7 @@
 
     document.getElementById('questionnaire').innerHTML = `
       <div style="text-align:center;padding:60px 20px">
-        <div style="font-size:4rem;margin-bottom:16px"></div>
+        <div style="font-size:4rem;margin-bottom:16px">🌿</div>
         <h2 style="font-family:'Poppins',sans-serif;font-size:1.8rem;font-weight:700;
                    color:#207719;margin-bottom:12px">
           ¡Ya tienes tus recomendaciones!
@@ -443,7 +444,6 @@
     `;
   }
 
-  // ── Selección de opciones ────────────────────────────────────────────
   function selectOption(categoria, valor, elemento) {
     preferencias[categoria] = valor;
     elemento.parentElement.querySelectorAll('.option-card')
@@ -451,7 +451,6 @@
     elemento.classList.add('selected');
   }
 
-  // ── Enviar encuesta ──────────────────────────────────────────────────
   async function obtenerRecomendaciones() {
     preferencias.presupuesto = document.getElementById('precio-max').value;
 
@@ -480,9 +479,8 @@
 
       const data = await res.json();
 
-      // Guardar en sessionStorage — nota: tu controller usa "recomendaciones"
       sessionStorage.setItem('plantaRecomendaciones', JSON.stringify({
-        plantas: data.recomendaciones,  // 👈 key de tu controller
+        plantas: data.recomendaciones,
         filtros: data.preferencias || preferencias,
       }));
 

@@ -1,14 +1,13 @@
 // =============================================
 // controllers/recomendaciones.controller.js
-// REEMPLAZA tu archivo actual con este
 // =============================================
 
 const mongoose = require('mongoose');
 const Product = mongoose.models.Product || require('../models/Product');
-const User    = require('../models/User');   // ajusta la ruta si es distinta
+const User    = require('../models/User');
 const jwt     = require('jsonwebtoken');
 
-// ── Helper: extraer userId del JWT (sin middleware externo) ──────────
+// ── Helper: extraer userId del JWT ──────────────────────────────────
 function getUserIdFromToken(req) {
   try {
     const authHeader = req.headers.authorization;
@@ -26,7 +25,7 @@ function getUserIdFromToken(req) {
   }
 }
 
-// ── Helper: buscar plantas (tu lógica original, sin cambios) ─────────
+// ── Helper: buscar plantas ───────────────────────────────────────────
 async function buscarPlantas({ ubicacion, tipo, presupuesto, preferencia }) {
   let query = {
     category: 'plantas',
@@ -47,15 +46,14 @@ async function buscarPlantas({ ubicacion, tipo, presupuesto, preferencia }) {
     plantas = await Product.find({ category: 'plantas', status: 'active' }).limit(6);
   }
 
-  // Sistema de puntuación (tu lógica original)
+  // Sistema de puntuación
   plantas = plantas.map(planta => {
     let score = 0;
-    if (planta.tags?.includes(ubicacion))    score += 30;
-    if (planta.keywords?.includes(tipo))     score += 30;
-    if (planta.featured)                     score += 15;
+    if (planta.tags?.includes(ubicacion))  score += 30;
+    if (planta.keywords?.includes(tipo))   score += 30;
+    if (planta.featured)                   score += 15;
     score += (planta.salesCount || 0) * 0.2;
     score += (planta.rating?.average || 0) * 10;
-
     return { ...planta.toObject(), score: Math.round(score) };
   });
 
@@ -73,14 +71,11 @@ async function buscarPlantas({ ubicacion, tipo, presupuesto, preferencia }) {
 
 // ============================================================
 // GET /api/recomendaciones/estado
-// Devuelve si el usuario ya hizo la encuesta.
-// El frontend lo llama al cargar el index y la encuesta.html
 // ============================================================
 const obtenerEstado = async (req, res, next) => {
   try {
     const userId = getUserIdFromToken(req);
 
-    // Usuario no autenticado
     if (!userId) {
       return res.json({ completada: false, autenticado: false });
     }
@@ -102,57 +97,54 @@ const obtenerEstado = async (req, res, next) => {
 
 // ============================================================
 // POST /api/recomendaciones
-// - Si el usuario está autenticado y YA hizo la encuesta:
-//     devuelve sus plantas guardadas sin guardar nada nuevo.
-// - Si es la PRIMERA VEZ:
-//     guarda las preferencias en su documento User y devuelve plantas.
-// - Si NO está autenticado:
-//     responde normalmente sin guardar nada (modo invitado).
 // ============================================================
 const obtenerRecomendaciones = async (req, res, next) => {
   try {
     const { ubicacion, tipo, presupuesto, preferencia } = req.body;
 
-    // Validación básica (igual que antes)
     if (!ubicacion || !tipo) {
       return res.status(400).json({
-        success:  false,
+        success: false,
         message: 'Ubicación y tipo son obligatorios',
       });
     }
 
     const userId = getUserIdFromToken(req);
 
-    // ── Usuario autenticado ──────────────────────────────────────────
+    // ── Usuario autenticado ─────────────────────────────────────────
     if (userId) {
-      const user = await User.findById(userId).select('encuesta');
+      const user = await User.findById(userId).select('encuesta').lean();
       if (!user) return res.status(404).json({ message: 'Usuario no encontrado.' });
 
       // Ya completó la encuesta → devolver sus resultados guardados
       if (user.encuesta?.completada) {
         const plantas = await buscarPlantas(user.encuesta.preferencias);
         return res.json({
-          success:      true,
-          yaCompletada: true,
-          total:        plantas.length,
+          success:         true,
+          yaCompletada:    true,
+          total:           plantas.length,
           recomendaciones: plantas,
-          preferencias: user.encuesta.preferencias,
-          mensaje:      'Mostrando tus recomendaciones personalizadas.',
+          preferencias:    user.encuesta.preferencias,
+          mensaje:         'Mostrando tus recomendaciones personalizadas.',
         });
       }
 
-      // Primera vez → guardar preferencias en su documento User
-      user.encuesta = {
-        completada:     true,
-        fechaRespuesta: new Date(),
-        preferencias:   {
-          ubicacion,
-          tipo,
-          presupuesto: Number(presupuesto) || 0,
-          preferencia,
-        },
-      };
-      await user.save();
+      // Primera vez → guardar con updateOne (evita validaciones de save())
+      const resultado = await User.updateOne(
+        { _id: userId },
+        {
+          $set: {
+            'encuesta.completada':               true,
+            'encuesta.fechaRespuesta':           new Date(),
+            'encuesta.preferencias.ubicacion':   ubicacion,
+            'encuesta.preferencias.tipo':        tipo,
+            'encuesta.preferencias.presupuesto': Number(presupuesto) || 0,
+            'encuesta.preferencias.preferencia': preferencia,
+          }
+        }
+      );
+
+      console.log('✅ Encuesta guardada:', resultado);
 
       const plantas = await buscarPlantas({ ubicacion, tipo, presupuesto, preferencia });
       return res.json({
@@ -160,11 +152,11 @@ const obtenerRecomendaciones = async (req, res, next) => {
         yaCompletada:    false,
         total:           plantas.length,
         recomendaciones: plantas,
-        preferencias:    user.encuesta.preferencias,
+        preferencias:    { ubicacion, tipo, presupuesto: Number(presupuesto) || 0, preferencia },
       });
     }
 
-    // ── Usuario invitado (sin JWT) → funciona pero no guarda ────────
+    // ── Usuario invitado → responde sin guardar ─────────────────────
     const plantas = await buscarPlantas({ ubicacion, tipo, presupuesto, preferencia });
     return res.json({
       success:         true,

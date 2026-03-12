@@ -669,7 +669,8 @@
 
                             if (result.success) {
                                 // Guardar sesión
-                                localStorage.setItem('growhouse_token', result.token);
+                                localStorage.setItem('growhouse-auth-token', result.token);
+                                localStorage.setItem('growhouse-nueva-cuenta', 'true');
                                 localStorage.setItem('growhouse_user', JSON.stringify(result.user));
 
                                 showAuthNotification('¡Cuenta creada exitosamente! Bienvenido 🌱', 'success');
@@ -680,7 +681,7 @@
                                 onclick="resendCode('${userData.email}', '${userData.firstName}', '${userData.lastName}')"
                                 class="w-full text-green-700 text-sm font-medium hover:underline">
                                 ¿No recibiste el código? Reenviar
-                            </button>
+                            </button>f
 
                             <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-4 text-sm text-yellow-800">
                                 ⚠️ El código expira en 10 minutos. Revisa también spam.
@@ -766,13 +767,17 @@
                 const result = await response.json();
 
                 if (result.success) {
-                    // Guardar sesión
-                    localStorage.setItem('growhouse_token', result.token);
+                    // ✅ Guardar sesión con el nombre correcto
+                    localStorage.setItem('growhouse-auth-token', result.token);
                     localStorage.setItem('growhouse_user', JSON.stringify(result.user));
+
+                    // ✅ Marcar que debe hacer la encuesta (solo usuarios nuevos)
+                    localStorage.setItem('growhouse-nueva-cuenta', 'true');
 
                     showAuthNotification('¡Cuenta creada exitosamente! Bienvenido 🌱', 'success');
                     setTimeout(() => { window.location.href = 'recomendaciones.html'; }, 1500);
-                } else {
+                }
+                else {
                     codeError.textContent = result.message || result.error || 'Código incorrecto';
                     codeError.classList.remove('hidden');
                 }
